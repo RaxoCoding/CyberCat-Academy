@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { createClient } from "@supabase/supabase-js"
 import { Auth as SupabaseAuth } from "@supabase/auth-ui-react"

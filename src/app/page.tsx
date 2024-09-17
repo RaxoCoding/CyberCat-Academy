@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, BookOpen, ArrowRight } from 'lucide-react'; // Import icons
+import { ArrowRight } from 'lucide-react';
 
 export default function Home() {
   return (
