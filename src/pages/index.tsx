@@ -1,16 +1,30 @@
 import React from 'react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Shield, BookOpen, ArrowRight } from 'lucide-react'; // Import icons
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-900 text-gray-100">
-      <main className="text-center">
-        <h1 className="text-4xl font-bold mb-6">Welcome to Cyber Cat Challenges</h1>
-        <p className="mb-8">Enhance your cybersecurity skills with our challenges and courses.</p>
-        <Link href="/challenges" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Start Learning
-        </Link>
-      </main>
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-background">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-4xl font-bold text-center flex items-center justify-center">
+            Cyber Cat Challenges
+          </CardTitle>
+          <CardDescription className="text-center flex items-center justify-center">
+            Enhance your cybersecurity skills with our challenges and courses.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-center">
+          <Button asChild>
+            <Link href="/challenges" className="flex items-center">
+              Start Learning
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
