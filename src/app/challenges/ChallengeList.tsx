@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/challenge'
+import { Database } from '@/types/challenge';
+import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type Challenge = Database['public']['Tables']['challenges']['Row']
 type Category = Database['public']['Tables']['categories']['Row']
@@ -64,9 +67,12 @@ export default function ChallengeList() {
                 <p className="text-gray-300 mb-2">{challenge.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-400">Points: {challenge.points}</span>
-                  <button className="bg-primary text-primary-foreground px-3 py-1 rounded">
-                    Solve
-                  </button>
+                  <Button asChild variant="ghost" className="bg-primary text-primary-foreground px-3 py-1 rounded">
+                    <Link href={"/challenge/" + challenge.name}>
+                      <Check className="mr-2 h-4 w-4" />
+                      Solve
+                    </Link>
+                  </Button>
                 </div>
               </div>
             ))}
