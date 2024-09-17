@@ -36,19 +36,19 @@ export default function RootLayout({
   return (
     <>
       <Head>
-        <title>CyberCat Academy</title>
-        <meta name="description" content="Enhance your cybersecurity skills with CyberCat Academy" />
+        <title>3C CTF - Cyber Cat Challenges</title>
+        <meta name="description" content="Enhance your cybersecurity skills with Cyber Cat Challenges" />
       </Head>
-      <nav className="bg-gray-800 text-white p-4">
+      <nav className="bg-gray-800 text-gray-100 p-4">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="text-xl font-bold">
-            CyberCat Academy
+            Cyber Cat Challenges - 3C CTF
           </Link>
           <div>
             {user ? (
               <>
                 <span className="mr-4">Welcome, {user.email}</span>
-                <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded">
+                <button onClick={handleLogout} className="bg-gray-200 hover:bg-gray-100 px-4 py-2 rounded text-blue-800">
                   Logout
                 </button>
               </>
