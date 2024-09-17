@@ -16,19 +16,50 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [userAuth, setUserAuth] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
+    const getSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      setUserAuth(session?.user ?? null);
+    };
+
+    getSession();
+
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       router.push('/');
-      setUser(session?.user ?? null);
+      setUserAuth(session?.user ?? null);
     });
 
     return () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
+
+  // Fetch profile whenever the user changes
+  useEffect(() => {
+    const getUser = async () => {
+      if (userAuth) {
+        const { data: userData, error: profileError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', userAuth.id)
+          .single();
+
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+        } else {
+          setUser(userData);
+        }
+      } else {
+        setUser(null);
+      }
+    };
+
+    getUser();
+  }, [userAuth]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -49,16 +80,16 @@ export default function RootLayout({
           <div>
             {user ? (
               <>
-                <span className="mr-4">Welcome, {user.email}</span>
+                <span className="mr-4">Welcome, {user.username}</span>
                 <Button variant="destructive" onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" /> {/* Add Logout icon */}
+                  <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </Button>
               </>
             ) : (
               <Button asChild>
                 <Link href="/auth">
-                  <LogIn className="mr-2 h-4 w-4" /> {/* Add Login icon */}
+                  <LogIn className="mr-2 h-4 w-4" />
                   Login / Sign Up
                 </Link>
               </Button>
