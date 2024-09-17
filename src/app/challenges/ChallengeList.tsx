@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '../types/challenge'
+import { Database } from '@/types/challenge'
 
 type Challenge = Database['public']['Tables']['challenges']['Row']
 type Category = Database['public']['Tables']['categories']['Row']

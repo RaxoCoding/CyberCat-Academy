@@ -1,4 +1,4 @@
-import ChallengeList from './ChallengeList'
+import ChallengeList from '@/app/challenges/ChallengeList'
 
 export default function ChallengePage() {
     return (
