@@ -12,7 +12,7 @@ const supabase = createClient(
 
 export default function Auth() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900">
+    <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Sign in</CardTitle>
@@ -28,25 +28,25 @@ export default function Auth() {
               variables: {
                 default: {
                   colors: {
-                    brand: '#404040',
-                    brandAccent: '#52525b',
+                    brand: 'hsl(var(--primary))',
+                    brandAccent: 'hsl(var(--primary-foreground))',
                   },
                 },
               },
               style: {
                 button: {
-                  borderRadius: '6px',
+                  borderRadius: 'var(--radius)',
                   fontSize: '16px',
                   fontWeight: '500',
                   padding: '10px 15px',
                 },
                 input: {
-                  borderRadius: '6px',
+                  borderRadius: 'var(--radius)',
                   fontSize: '16px',
                   padding: '10px 15px',
                 },
                 anchor: {
-                  color: '#52525b',
+                  color: 'hsl(var(--primary))',
                   fontWeight: '500',
                 },
               },
