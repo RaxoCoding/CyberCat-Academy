@@ -3,6 +3,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { createClient, User } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
+import { Button } from '@/components/ui/button';
+import { LogIn, LogOut } from 'lucide-react'; // Import the icons
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,12 +36,12 @@ export default function RootLayout({
   };
 
   return (
-    <>
+    <div className="dark">
       <Head>
         <title>CyberCat Academy</title>
         <meta name="description" content="Enhance your cybersecurity skills with CyberCat Academy" />
       </Head>
-      <nav className="bg-gray-800 text-white p-4">
+      <nav className="bg-secondary text-secondary-foreground p-4">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="text-xl font-bold">
             CyberCat Academy
@@ -48,19 +50,23 @@ export default function RootLayout({
             {user ? (
               <>
                 <span className="mr-4">Welcome, {user.email}</span>
-                <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded">
+                <Button variant="destructive" onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" /> {/* Add Logout icon */}
                   Logout
-                </button>
+                </Button>
               </>
             ) : (
-              <Link href="/auth" className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">
-                Login / Sign Up
-              </Link>
+              <Button asChild>
+                <Link href="/auth">
+                  <LogIn className="mr-2 h-4 w-4" /> {/* Add Login icon */}
+                  Login / Sign Up
+                </Link>
+              </Button>
             )}
           </div>
         </div>
       </nav>
-      <main>{children}</main>
-    </>
+      <main className="bg-background text-foreground">{children}</main>
+    </div>
   );
 }
