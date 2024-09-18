@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { createClient, User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, Trophy } from "lucide-react";
+import { LogIn, LogOut, Trophy, Flag } from "lucide-react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -91,6 +91,12 @@ export default function RootLayout({
                 <Link href="/" className="text-xl font-bold">
                   CyberCat Academy
                 </Link>
+                <Button asChild variant="ghost">
+                  <Link href="/challenges">
+                    <Flag className="mr-2 h-4 w-4" />
+                    Challenges
+                  </Link>
+                </Button>
                 <Button asChild variant="ghost">
                   <Link href="/scoreboard">
                     <Trophy className="mr-2 h-4 w-4" />

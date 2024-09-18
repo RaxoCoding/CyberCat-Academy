@@ -10,7 +10,7 @@ export default function Home() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-4xl font-bold text-center flex items-center justify-center">
-            CyberCat Academy
+            Cyber Cat Challenges
           </CardTitle>
           <CardDescription className="text-center flex items-center justify-center">
             Enhance your cybersecurity skills with our challenges and courses.
