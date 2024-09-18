@@ -15,7 +15,6 @@ export default function ChallengePage() {
   >(null);
   const [error, setError] = useState<string | null>(null);
 
-
   useEffect(() => {
     async function fetchChallenge() {
       if (!loading && params.name) {
@@ -24,7 +23,6 @@ export default function ChallengePage() {
           .select("*")
           .eq("name", decodeURIComponent(params.name as string))
           .single();
-
         if (error) {
           console.error("Error fetching challenge:", error);
           setError("Challenge not found");
