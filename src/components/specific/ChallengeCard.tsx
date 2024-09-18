@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -7,7 +6,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { Check } from "lucide-react";
 import { Database } from "@/types/supabase";
 
 interface ChallengeCardProps {

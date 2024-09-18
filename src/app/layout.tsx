@@ -9,6 +9,9 @@ import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { createClient, User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, Trophy, Flag } from "lucide-react";
+import { Database } from '@/types/supabase';
+
+type DBUser = Database["public"]["Tables"]["users"]["Row"];
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [userAuth, setUserAuth] = useState<User | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<DBUser | null>(null);
   const router = useRouter();
 
   useEffect(() => {

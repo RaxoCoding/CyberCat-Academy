@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Github, Book, Shield, Terminal, Network } from 'lucide-react';
+import { ArrowRight, Github, Shield, Terminal, Network } from 'lucide-react';
 
 const categories = [
   { name: 'Cryptography', icon: <Shield className="h-6 w-6" /> },
