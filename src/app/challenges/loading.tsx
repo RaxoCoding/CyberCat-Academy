@@ -8,7 +8,7 @@ import {
 
 export default function ChallengesLoading() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <Skeleton className="h-10 w-1/3 mb-6" /> {/* Page title skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[...Array(9)].map((_, i) => (
