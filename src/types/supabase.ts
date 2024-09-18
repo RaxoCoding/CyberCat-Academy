@@ -34,6 +34,7 @@ export interface Database {
                     points: number
                     category_id: number
                     created_at: string
+                    flag: string
                 }
                 Insert: {
                     id?: number
@@ -42,6 +43,7 @@ export interface Database {
                     points: number
                     category_id: number
                     created_at?: string
+                    flag: string
                 }
                 Update: {
                     id?: number
@@ -50,6 +52,7 @@ export interface Database {
                     points?: number
                     category_id?: number
                     created_at?: string
+                    flag?: string
                 }
             }
         }

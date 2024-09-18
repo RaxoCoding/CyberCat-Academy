@@ -78,7 +78,7 @@ export default function RootLayout({
     <SessionContextProvider supabaseClient={supabase}>
       <html className="dark">
         <Head>
-          <title>Cyber Cat Challenges</title>
+          <title>CyberCat Academy</title>
           <meta
             name="description"
             content="Enhance your cybersecurity skills with Cyber Cat Challenges"
@@ -89,7 +89,7 @@ export default function RootLayout({
             <div className="container mx-auto flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <Link href="/" className="text-xl font-bold">
-                  Cyber Cat Challenges
+                  CyberCat Academy
                 </Link>
                 <Button asChild variant="ghost">
                   <Link href="/challenges">

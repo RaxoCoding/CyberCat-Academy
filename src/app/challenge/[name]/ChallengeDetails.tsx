@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import type { Database } from '@/types/challenge'
+import type { Database } from '@/types/supabase'
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Swords, Goal } from 'lucide-react';
