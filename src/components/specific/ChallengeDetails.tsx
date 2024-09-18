@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
 import type { Database } from '@/types/supabase'
 import { Button } from '@/components/ui/button';
 import { Swords, Goal } from 'lucide-react';
@@ -12,13 +13,18 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
   const [flag, setFlag] = useState('')
   const [message, setMessage] = useState('')
   const supabase = createClientComponentClient<Database>()
+  const { user: userAuth, supabase2, loading } = useSupabaseAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
 
     const { data, error } = await supabase
-      .rpc('verify_flag', { challenge_id: challenge.id, submitted_flag: flag})
+      .rpc('add_solved_challenge', {
+        p_user_id: userAuth.id,
+        p_challenge_id: challenge.id,
+        p_submitted_flag: flag
+      })
 
     if (error) {
       setMessage('An error occurred. Please try again.')
