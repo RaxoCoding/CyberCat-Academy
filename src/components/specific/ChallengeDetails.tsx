@@ -36,13 +36,11 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
   }
 
   const handleDownload = () => {
-    // In a real scenario, you'd generate a signed URL for the file
-    // and use that for download. For this example, we'll just simulate a download.
     const dummyData = 'Challenge file contents'
     const blob = new Blob([dummyData], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = url
+    a.href = challenge.url
     a.download = `${challenge.name}_file.txt`
     document.body.appendChild(a)
     a.click()
