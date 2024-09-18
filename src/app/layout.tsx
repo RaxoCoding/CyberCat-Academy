@@ -9,6 +9,7 @@ import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, Trophy, Flag } from "lucide-react";
 import { Database } from '@/types/supabase';
+import { Analytics } from "@vercel/analytics/react"
 
 type DBUser = Database["public"]["Tables"]["users"]["Row"];
 
@@ -100,6 +101,7 @@ export default function RootLayout({
           </div>
         </nav>
         <main className="bg-background text-foreground p-8">{children}</main>
+        <Analytics />
       </body>
     </html>
   );
