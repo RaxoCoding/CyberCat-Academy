@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, Trophy, Flag } from "lucide-react";
 import { Database } from '@/types/supabase';
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 type DBUser = Database["public"]["Tables"]["users"]["Row"];
 
@@ -102,6 +103,7 @@ export default function RootLayout({
         </nav>
         <main className="bg-background text-foreground p-8">{children}</main>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
