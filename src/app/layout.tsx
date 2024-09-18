@@ -124,7 +124,7 @@ export default function RootLayout({
               </div>
             </div>
           </nav>
-          <main className="bg-background text-foreground">{children}</main>
+          <main className="bg-background text-foreground p-8">{children}</main>
         </body>
       </html>
     </SessionContextProvider>
