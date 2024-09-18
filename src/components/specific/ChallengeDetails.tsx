@@ -28,7 +28,7 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
 
     if (error) {
       setMessage('An error occurred. Please try again.')
-    } else if (data && data.length > 0) {
+    } else if (data) {
       setMessage('Congratulations! You solved the challenge!')
     } else {
       setMessage('Incorrect flag. Try again!')
