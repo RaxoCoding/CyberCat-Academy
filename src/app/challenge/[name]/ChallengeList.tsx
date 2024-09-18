@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/challenge';
-import { Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Database } from '@/types/supabase'
+import Link from 'next/link'
 
 type Challenge = Database['public']['Tables']['challenges']['Row']
 type Category = Database['public']['Tables']['categories']['Row']
@@ -62,17 +60,17 @@ export default function ChallengeList() {
           <h2 className="text-2xl font-semibold mb-4">{category.name}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {category.challenges.map(challenge => (
-                <div key={challenge.id} className="bg-card text-card-foreground rounded-lg p-4 hover:bg-gray-600 transition-colors">
+              <div key={challenge.id} className="bg-background text-background-foreground rounded-lg p-4 hover:bg-gray-800 transition-colors">
                 <h3 className="text-xl font-medium mb-2">{challenge.name}</h3>
                 <p className="text-gray-300 mb-2">{challenge.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-400">Points: {challenge.points}</span>
-                  <Button asChild variant="ghost" className="bg-primary text-primary-foreground px-3 py-1 rounded">
-                    <Link href={"/challenge/" + challenge.name}>
-                      <Check className="mr-2 h-4 w-4" />
-                      Solve
-                    </Link>
-                  </Button>
+                  <Link
+                    href={`/challenge/${encodeURIComponent(challenge.name)}`}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+                  >
+                    Solve
+                  </Link>
                 </div>
               </div>
             ))}
