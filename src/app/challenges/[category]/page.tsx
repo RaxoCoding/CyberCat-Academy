@@ -25,7 +25,7 @@ export default async function CategoryPage({
 
   // Then, fetch the challenges using the category's id
   const { data: challenges, error: challengesError } = await supabase
-    .from("challenges")
+    .from("public_challenges")
     .select("*")
     .eq("category_id", category.id)
     .order("points");

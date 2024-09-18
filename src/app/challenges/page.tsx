@@ -8,7 +8,7 @@ export default async function ChallengesPage() {
 
   const [categoriesResponse, challengesResponse] = await Promise.all([
     supabase.from("categories").select("*").order("name"),
-    supabase.from("challenges").select("*").order("points"),
+    supabase.from("public_challenges").select("*").order("points"),
   ]);
 
   const { data: categories, error: categoriesError } = categoriesResponse;

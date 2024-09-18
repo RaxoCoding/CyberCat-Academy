@@ -12,7 +12,7 @@ export default async function ChallengePage({
   const supabase = createServerComponentClient<Database>({ cookies });
 
   const { data: challenge, error } = await supabase
-    .from("challenges")
+    .from("public_challenges")
     .select("*")
     .eq("name", decodeURIComponent(params.name))
     .single();
