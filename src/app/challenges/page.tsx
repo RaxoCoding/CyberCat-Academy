@@ -1,23 +1,37 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import type { Database } from "@/types/supabase";
-import CategoryList from "@/components/specific/CategoryList";
+"use client"
 
-export default async function ChallengesPage() {
-  const supabase = createServerComponentClient<Database>({ cookies });
+import { useEffect, useState } from 'react';
+import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
+import CategoryList from '@/components/specific/CategoryList';
+import { Database } from '@/types/supabase';
+import ChallengesLoading from './loading';
 
-  const [categoriesResponse, challengesResponse] = await Promise.all([
-    supabase.from("categories").select("*").order("name"),
-    supabase.from("public_challenges").select("*").order("points"),
-  ]);
+export default function ChallengesPage() {
+  const { supabase } = useSupabaseAuth();
+  const [categories, setCategories] = useState<Database['public']['Tables']['categories']['Row'][] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: categories, error: categoriesError } = categoriesResponse;
-  const { data: challenges, error: challengesError } = challengesResponse;
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .order('name');
 
-  if (categoriesError || challengesError) {
-    console.error("Error fetching data:", categoriesError || challengesError);
-    return <div>Error loading challenges. Please try again later.</div>;
-  }
+        if (error) throw error;
+        setCategories(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Error loading challenges. Please try again later.');
+      }
+    }
+
+    fetchCategories();
+  }, [supabase]);
+
+  if (error) return <div>{error}</div>;
+  if (!categories) return <ChallengesLoading />;
 
   return <CategoryList categories={categories} />;
 }

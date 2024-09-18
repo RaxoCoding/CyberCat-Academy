@@ -63,7 +63,7 @@ export default function Home() {
           {testimonials.map((testimonial, index) => (
             <Card key={index}>
               <CardContent className="p-4">
-                <p className="italic">"{testimonial.text}"</p>
+                <p className="italic">&quot;{testimonial.text}`&quot;</p>
                 <p className="mt-2 font-bold">- {testimonial.name}</p>
               </CardContent>
             </Card>
