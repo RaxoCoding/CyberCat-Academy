@@ -1,48 +1,43 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useSupabaseAuth } from '@/hooks/useSupbaseAuth';
-import { notFound } from 'next/navigation';
-import ChallengeDetails from '@/components/specific/ChallengeDetails';
-import type { Database } from '@/types/supabase';
+import { useEffect, useState } from "react";
+import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
+import { useParams } from "next/navigation";
+import ChallengeDetails from "@/components/specific/ChallengeDetails";
+import { Database } from "@/types/supabase";
+import ChallengeLoading from "./loading";
 
-type Challenge = Database['public']['Tables']['challenges']['Row'];
-
-export default function ChallengePage({
-  params,
-}: {
-  params: { name: string };
-}) {
-  const { supabase } = useSupabaseAuth();
-  const [challenge, setChallenge] = useState<Challenge | null>(null);
+export default function ChallengePage() {
+  const { supabase, loading } = useSupabaseAuth();
+  const params = useParams();
+  const [challenge, setChallenge] = useState<
+    Database["public"]["Tables"]["challenges"]["Row"] | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchChallenge() {
-      const { data, error } = await supabase
-        .from('challenges')
-        .select('*')
-        .eq('name', decodeURIComponent(params.name))
-        .single();
+      if (!loading && params.name) {
+        const { data, error } = await supabase
+          .from("challenges")
+          .select("*")
+          .eq("name", decodeURIComponent(params.name as string))
+          .single();
 
-      if (error) {
-        console.error('Error fetching challenge:', error);
-        setError('Error loading challenge. Please try again later.');
-      } else {
-        setChallenge(data);
+        if (error) {
+          console.error("Error fetching challenge:", error);
+          setError("Challenge not found");
+        } else {
+          setChallenge(data);
+        }
       }
     }
 
     fetchChallenge();
-  }, [supabase, params.name]);
+  }, [supabase, loading, params.name]);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (!challenge) {
-    return notFound();
-  }
+  if (error) return <div>{error}</div>;
+  if (!challenge) return <ChallengeLoading />;
 
   return (
     <div className="bg-background text-white">

@@ -1,11 +1,9 @@
-import React from "react";
-import { createClient } from "@supabase/supabase-js";
-import { Scoreboard } from "@/components/specific/Scoreboard";
+"use client"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { useEffect, useState } from 'react';
+import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
+import { Scoreboard } from "@/components/specific/Scoreboard";
+import ScoreboardPageLoading from './loading';
 
 interface ScoreboardData {
   rank: number;
@@ -13,24 +11,39 @@ interface ScoreboardData {
   score: number;
 }
 
-async function fetchScoreboardData(): Promise<ScoreboardData[]> {
-  const { data, error } = await supabase
-    .from("users")
-    .select("username, score")
-    .order("score", { ascending: false })
-    .limit(10);
+export default function ScoreboardPage() {
+  const { supabase, loading } = useSupabaseAuth();
+  const [scoreboardData, setScoreboardData] = useState<ScoreboardData[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  if (error) throw error;
+  useEffect(() => {
+    async function fetchScoreboardData() {
+      if (!loading) {
+        const { data, error } = await supabase
+          .from("users")
+          .select("username, score")
+          .order("score", { ascending: false })
+          .limit(10);
 
-  return data.map((user, index) => ({
-    rank: index + 1,
-    username: user.username,
-    score: user.score,
-  }));
-}
+        if (error) {
+          console.error('Error fetching scoreboard:', error);
+          setError('Error loading scoreboard. Please try again later.');
+        } else {
+          const formattedData = data.map((user, index) => ({
+            rank: index + 1,
+            username: user.username,
+            score: user.score,
+          }));
+          setScoreboardData(formattedData);
+        }
+      }
+    }
 
-export default async function ScoreboardPage() {
-  const scoreboardData = await fetchScoreboardData();
+    fetchScoreboardData();
+  }, [supabase, loading]);
+
+  if (error) return <div>{error}</div>;
+  if (!scoreboardData) return <ScoreboardPageLoading />;
 
   return <Scoreboard scoreboardData={scoreboardData} />;
 }

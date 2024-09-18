@@ -1,38 +1,37 @@
-'use client';
+"use client"
 
 import { useEffect, useState } from 'react';
-import { useSupabaseAuth } from '@/hooks/useSupbaseAuth';
-import type { Database } from '@/types/supabase';
+import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
 import CategoryList from '@/components/specific/CategoryList';
-
-type Category = Database['public']['Tables']['categories']['Row'];
+import { Database } from '@/types/supabase';
+import ChallengesLoading from './loading';
 
 export default function ChallengesPage() {
   const { supabase } = useSupabaseAuth();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Database['public']['Tables']['categories']['Row'][] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchCategories() {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name');
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .order('name');
 
-      if (error) {
+        if (error) throw error;
+        setCategories(data);
+      } catch (error) {
         console.error('Error fetching data:', error);
         setError('Error loading challenges. Please try again later.');
-      } else {
-        setCategories(data);
       }
     }
 
     fetchCategories();
   }, [supabase]);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (error) return <div>{error}</div>;
+  if (!categories) return <ChallengesLoading />;
 
   return <CategoryList categories={categories} />;
 }

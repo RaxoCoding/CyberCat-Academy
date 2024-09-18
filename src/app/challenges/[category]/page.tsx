@@ -1,44 +1,65 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
+import { useParams } from "next/navigation";
 import ChallengeList from "@/components/specific/ChallengeList";
-import type { Database } from "@/types/supabase";
-import { notFound } from "next/navigation";
+import { Database } from "@/types/supabase";
+import CategoryChallengesLoading from "./loading";
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: { category: string };
-}) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+export default function CategoryPage() {
+  const { supabase, loading } = useSupabaseAuth();
+  const params = useParams();
+  const [category, setCategory] = useState<
+    Database["public"]["Tables"]["categories"]["Row"] | null
+  >(null);
+  const [challenges, setChallenges] = useState<
+    Database["public"]["Tables"]["challenges"]["Row"][] | null
+  >(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // First, fetch the category
-  const { data: category, error: categoryError } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("name", decodeURIComponent(params.category))
-    .single();
+  useEffect(() => {
+    async function fetchCategoryAndChallenges() {
+      if (!loading && params.category) {
+        const { data: categoryData, error: categoryError } = await supabase
+          .from("categories")
+          .select("*")
+          .eq("name", decodeURIComponent(params.category as string))
+          .single();
 
-  if (categoryError || !category) {
-    console.error("Error fetching category:", categoryError);
-    notFound();
-  }
+        if (categoryError) {
+          console.error("Error fetching category:", categoryError);
+          setError("Category not found");
+          return;
+        }
 
-  // Then, fetch the challenges using the category's id
-  const { data: challenges, error: challengesError } = await supabase
-    .from("challenges")
-    .select("*")
-    .eq("category_id", category.id)
-    .order("points");
+        setCategory(categoryData);
 
-  if (challengesError) {
-    console.error("Error fetching challenges:", challengesError);
-    return <div>Error loading challenges. Please try again later.</div>;
-  }
+        const { data: challengesData, error: challengesError } = await supabase
+          .from("challenges")
+          .select("*")
+          .eq("category_id", categoryData.id)
+          .order("points");
+
+        if (challengesError) {
+          console.error("Error fetching challenges:", challengesError);
+          setError("Error loading challenges. Please try again later.");
+        } else {
+          setChallenges(challengesData);
+        }
+      }
+    }
+
+    fetchCategoryAndChallenges();
+  }, [supabase, loading, params.category]);
+
+  if (error) return <div>{error}</div>;
+  if (!category || !challenges) return <CategoryChallengesLoading />;
 
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">{category.name} Challenges</h1>
-      <ChallengeList challenges={challenges || []} />
+      <ChallengeList challenges={challenges} />
     </div>
   );
 }
