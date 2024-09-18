@@ -1,24 +1,47 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
-import ChallengeDetails from "@/components/specific/ChallengeDetails";
-import type { Database } from "@/types/supabase";
+'use client';
 
-export default async function ChallengePage({
+import { useEffect, useState } from 'react';
+import { useSupabaseAuth } from '@/hooks/useSupbaseAuth';
+import { notFound } from 'next/navigation';
+import ChallengeDetails from '@/components/specific/ChallengeDetails';
+import type { Database } from '@/types/supabase';
+
+type Challenge = Database['public']['Tables']['challenges']['Row'];
+
+export default function ChallengePage({
   params,
 }: {
   params: { name: string };
 }) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const { supabase } = useSupabaseAuth();
+  const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: challenge, error } = await supabase
-    .from("challenges")
-    .select("*")
-    .eq("name", decodeURIComponent(params.name))
-    .single();
+  useEffect(() => {
+    async function fetchChallenge() {
+      const { data, error } = await supabase
+        .from('challenges')
+        .select('*')
+        .eq('name', decodeURIComponent(params.name))
+        .single();
 
-  if (error || !challenge) {
-    notFound();
+      if (error) {
+        console.error('Error fetching challenge:', error);
+        setError('Error loading challenge. Please try again later.');
+      } else {
+        setChallenge(data);
+      }
+    }
+
+    fetchChallenge();
+  }, [supabase, params.name]);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!challenge) {
+    return notFound();
   }
 
   return (
