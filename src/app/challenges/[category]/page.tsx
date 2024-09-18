@@ -36,7 +36,7 @@ export default function CategoryPage() {
         setCategory(categoryData);
 
         const { data: challengesData, error: challengesError } = await supabase
-          .from("challenges")
+          .from("public_challenges")
           .select("*")
           .eq("category_id", categoryData.id)
           .order("points");

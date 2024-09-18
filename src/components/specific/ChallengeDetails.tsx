@@ -18,14 +18,11 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
     setMessage('')
 
     const { data, error } = await supabase
-      .from('challenges')
-      .select('flag')
-      .eq('id', challenge.id)
-      .single()
+      .rpc('verify_flag', { challenge_id: challenge.id, submitted_flag: flag})
 
     if (error) {
       setMessage('An error occurred. Please try again.')
-    } else if (data.flag === flag) {
+    } else if (data && data.length > 0) {
       setMessage('Congratulations! You solved the challenge!')
     } else {
       setMessage('Incorrect flag. Try again!')
