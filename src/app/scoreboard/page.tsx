@@ -1,6 +1,6 @@
-import React from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { Scoreboard } from '@/components/specific/Scoreboard';
+import React from "react";
+import { createClient } from "@supabase/supabase-js";
+import { Scoreboard } from "@/components/specific/Scoreboard";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,9 +15,9 @@ interface ScoreboardData {
 
 async function fetchScoreboardData(): Promise<ScoreboardData[]> {
   const { data, error } = await supabase
-    .from('users')
-    .select('username, score')
-    .order('score', { ascending: false })
+    .from("users")
+    .select("username, score")
+    .order("score", { ascending: false })
     .limit(10);
 
   if (error) throw error;
@@ -32,9 +32,5 @@ async function fetchScoreboardData(): Promise<ScoreboardData[]> {
 export default async function ScoreboardPage() {
   const scoreboardData = await fetchScoreboardData();
 
-  return (
-    <div className="container mx-auto py-8">
-      <Scoreboard scoreboardData={scoreboardData} />
-    </div>
-  );
+  return <Scoreboard scoreboardData={scoreboardData} />;
 }
