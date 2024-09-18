@@ -14,16 +14,22 @@ export interface Database {
                     id: number
                     name: string
                     created_at: string
+                    icon: string
+                    description: string
                 }
                 Insert: {
                     id?: number
                     name: string
                     created_at?: string
+                    icon?: string
+                    description?: string
                 }
                 Update: {
                     id?: number
                     name?: string
                     created_at?: string
+                    icon?: string
+                    description?: string
                 }
             }
             challenges: {

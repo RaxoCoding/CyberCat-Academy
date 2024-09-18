@@ -91,13 +91,13 @@ export default function RootLayout({
                 <Link href="/" className="text-xl font-bold">
                   CyberCat Academy
                 </Link>
-                <Button asChild variant="ghost">
+                <Button asChild variant="link">
                   <Link href="/challenges">
                     <Flag className="mr-2 h-4 w-4" />
                     Challenges
                   </Link>
                 </Button>
-                <Button asChild variant="ghost">
+                <Button asChild variant="link">
                   <Link href="/scoreboard">
                     <Trophy className="mr-2 h-4 w-4" />
                     Scoreboard
