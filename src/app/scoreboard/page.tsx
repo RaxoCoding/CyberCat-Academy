@@ -20,9 +20,9 @@ export default function ScoreboardPage() {
     async function fetchScoreboardData() {
       if (!loading) {
         const { data, error } = await supabase
-          .from("users")
-          .select("username, score")
-          .order("score", { ascending: false })
+          .from("user_scores")
+          .select("username, total_score")
+          .order("total_score", { ascending: false })
           .limit(10);
 
         if (error) {
@@ -32,7 +32,7 @@ export default function ScoreboardPage() {
           const formattedData = data.map((user, index) => ({
             rank: index + 1,
             username: user.username,
-            score: user.score,
+            score: user.total_score,
           }));
           setScoreboardData(formattedData);
         }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
 import type { Database } from '@/types/supabase'
 import { Button } from '@/components/ui/button';
 import { Swords, Goal } from 'lucide-react';
@@ -12,20 +13,22 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
   const [flag, setFlag] = useState('')
   const [message, setMessage] = useState('')
   const supabase = createClientComponentClient<Database>()
+  const { user: userAuth, supabase2, loading } = useSupabaseAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
 
     const { data, error } = await supabase
-      .from('challenges')
-      .select('flag')
-      .eq('id', challenge.id)
-      .single()
+      .rpc('add_solved_challenge', {
+        p_user_id: userAuth.id,
+        p_challenge_id: challenge.id,
+        p_submitted_flag: flag
+      })
 
     if (error) {
       setMessage('An error occurred. Please try again.')
-    } else if (data.flag === flag) {
+    } else if (data) {
       setMessage('Congratulations! You solved the challenge!')
     } else {
       setMessage('Incorrect flag. Try again!')
@@ -33,13 +36,11 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
   }
 
   const handleDownload = () => {
-    // In a real scenario, you'd generate a signed URL for the file
-    // and use that for download. For this example, we'll just simulate a download.
     const dummyData = 'Challenge file contents'
     const blob = new Blob([dummyData], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = url
+    a.href = challenge.url
     a.download = `${challenge.name}_file.txt`
     document.body.appendChild(a)
     a.click()

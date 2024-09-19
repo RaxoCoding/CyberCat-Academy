@@ -19,11 +19,10 @@ export default function ChallengePage() {
     async function fetchChallenge() {
       if (!loading && params.name) {
         const { data, error } = await supabase
-          .from("challenges")
+          .from("public_challenges")
           .select("*")
           .eq("name", decodeURIComponent(params.name as string))
           .single();
-
         if (error) {
           console.error("Error fetching challenge:", error);
           setError("Challenge not found");
