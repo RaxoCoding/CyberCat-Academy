@@ -62,7 +62,7 @@ export default function ChallengeList({
           {visibleTags.map(tag => (
             <Button
               key={tag}
-              variant={selectedTags.includes(tag) ? "default" : "outline"}
+              variant={selectedTags.includes(tag) ? "default" : "outline-transparent"}
               size="sm"
               onClick={() => toggleTag(tag)}
               className="max-w-[200px]" // Limit the maximum width of the button
