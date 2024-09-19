@@ -40,16 +40,11 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
   }
 
   const handleDownload = () => {
-    const dummyData = 'Challenge file contents'
-    const blob = new Blob([dummyData], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = url
-    a.download = `${challenge.name}_file.txt`
+    a.href = challenge.url
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-    URL.revokeObjectURL(url)
   }
 
   return (
