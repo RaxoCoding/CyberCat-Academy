@@ -68,7 +68,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <body>
-        <nav className="bg-secondary text-secondary-foreground p-4">
+        <nav className="bg-card text-card-foreground p-4">
           <div className="container mx-auto flex justify-between items-center">
             <div className="flex items-center">
               <Link href="/" className="text-xl font-bold mr-4">
@@ -83,7 +83,7 @@ export default function RootLayout({
                 <Menu className="h-6 w-6" />
               </Button>
             </div>
-            <div className={`md:flex items-center gap-4 ${isMenuOpen ? 'flex flex-col absolute top-16 left-0 right-0 bg-secondary p-4 z-50' : 'hidden'}`}>
+            <div className={`md:flex items-center gap-4 ${isMenuOpen ? 'flex flex-col absolute top-16 left-0 right-0 bg-card p-4 z-50' : 'hidden'}`}>
               <Button asChild variant="link" className="w-full md:w-auto justify-start">
                 <Link href="/challenges">
                   <Flag className="mr-2 h-4 w-4" />
