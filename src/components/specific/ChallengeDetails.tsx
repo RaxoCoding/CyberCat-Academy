@@ -56,6 +56,25 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
       <div className="bg-card text-card-foreground p-6 rounded-lg shadow-lg">
       <p className="text-lg mb-4">{challenge.description}</p>
       <p className="mb-4">Points: {challenge.points}</p>
+      <div className="flex flex-wrap mb-3">
+        {challenge.tags.map((tag) => (
+          <span key={tag} className="text-muted-foreground text-xs bg-primary text-primary-foreground px-2 py-1 rounded-md m-1">
+            {tag}
+          </span>
+        ))}
+      </div>
+      <div className="flex flex-wrap mb-3">
+        <ul className="space-y-2">
+          {challenge.ressources.map((ressource) => (
+            <li key={ressource} className="flex items-center space-x-2">
+              <span key={ressource} className="w-2 h-2 bg-primary rounded-full"></span>
+              <a href={ressource} className="text-muted-foreground hover:text-green-400 transition-colors duration-200">
+                {ressource}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
       <Button className="bg-primary text-primary-foreground px-3 py-1 rounded" variant="destructive" onClick={handleDownload}>
         <Swords className="mr-2 h-4 w-4" />
         Start challenge
@@ -80,11 +99,26 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
           </Button>
         </div>
       </form>
+
       {message && (
         <p className={`mt-4 text-center ${message.includes('Congratulations') ? 'text-green-500' : 'text-red-500'}`}>
           {message}
         </p>
       )}
+
+      <div className="flex flex-wrap mt-3">
+        <ul className="space-y-2">
+          {challenge.writeups.map((writeup) => (
+            <li key={writeup} className="flex items-center space-x-2">
+              <span key={writeup} className="w-2 h-2 bg-primary rounded-full"></span>
+              <a href={writeup} className="text-muted-foreground hover:text-green-400 transition-colors duration-200">
+                {writeup}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      
     </div>
   )
 }
