@@ -93,7 +93,7 @@ export default function UserProfilePage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{profile.username}'s Profile</CardTitle>
+          <CardTitle>{profile.username}&apos;s Profile</CardTitle>
         </CardHeader>
         <CardContent>
           <p>
