@@ -21,8 +21,8 @@ export default function ScoreboardPage() {
       if (!loading) {
         const { data, error } = await supabase
           .from("user_scores")
-          .select("username, score")
-          .order("score", { ascending: false })
+          .select("username, total_score")
+          .order("total_score", { ascending: false })
           .limit(10);
 
         if (error) {

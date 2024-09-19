@@ -108,22 +108,22 @@ export interface Database {
             }
             user_scores: {
                 Row: {
-                    id: string
+                    user_id: string
                     username: string
-                    score: number
-                    created_at: string
+                    total_score: number
+                    challenges_solved: number
                 }
                 Insert: {
-                    id?: string
-                    username: string
-                    score?: number
-                    created_at?: string
+                    user_id?: string
+                    username?: string
+                    total_score?: number
+                    challenges_solved?: number
                 }
                 Update: {
-                    id?: string
+                    user_id?: string
                     username?: string
-                    score?: number
-                    created_at?: string
+                    total_score?: number
+                    challenges_solved?: number
                 }
             }
         }
