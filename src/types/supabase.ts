@@ -90,6 +90,23 @@ export interface Database {
                     writeups?: string[]
                 }
             }
+            users_link_challenges: {
+                Row: {
+                    user_id: string
+                    challenge_id: number
+                    created_at: string
+                }
+                Insert: {
+                    user_id: string
+                    challenge_id: number
+                    created_at?: string
+                }
+                Update: {
+                    user_id?: string
+                    challenge_id?: number
+                    created_at?: string
+                }
+            }
         }
         Views: {
             public_challenges: {
@@ -139,18 +156,21 @@ export interface Database {
                     username: string
                     total_score: number
                     challenges_solved: number
+                    created_at: string
                 }
                 Insert: {
                     user_id: string
                     username?: string
                     total_score?: number
                     challenges_solved?: number
+                    created_at?: string
                 }
                 Update: {
                     user_id: string
                     username?: string
                     total_score?: number
                     challenges_solved?: number
+                    created_at?: string
                 }
             }
         }

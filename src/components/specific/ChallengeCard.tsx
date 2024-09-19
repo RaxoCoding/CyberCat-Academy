@@ -10,9 +10,10 @@ import { Database } from "@/types/supabase";
 
 interface ChallengeCardProps {
   challenge: Database["public"]["Views"]["public_challenges"]["Row"];
+  solvedDate?: string;
 }
 
-export function ChallengeCard({ challenge }: ChallengeCardProps) {
+export function ChallengeCard({ challenge, solvedDate }: ChallengeCardProps) {
   return (
     <Link href={`/challenge/${challenge.name}`}>
       <Card className="hover:bg-accent transition-colors">
@@ -33,6 +34,11 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
           <span className="text-sm text-muted-foreground">
             Points: {challenge.points}
           </span>
+          {solvedDate && (
+            <span className="text-sm text-muted-foreground">
+              Solved: {new Date(solvedDate).toLocaleDateString()}
+            </span>
+          )}
         </CardFooter>
       </Card>
     </Link>

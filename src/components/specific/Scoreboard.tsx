@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -29,7 +30,11 @@ export function Scoreboard({ scoreboardData }: ScoreboardProps) {
             {scoreboardData.map((user) => (
               <TableRow key={user.rank}>
                 <TableCell className="font-medium">{user.rank}</TableCell>
-                <TableCell>{user.username}</TableCell>
+                <TableCell>
+                  <Link href={`/user/${encodeURIComponent(user.username)}`} className="text-primary hover:underline">
+                    {user.username}
+                  </Link>
+                </TableCell>
                 <TableCell className="text-right">{user.score}</TableCell>
               </TableRow>
             ))}
