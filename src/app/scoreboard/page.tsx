@@ -32,7 +32,7 @@ export default function ScoreboardPage() {
           const formattedData = data.map((user, index) => ({
             rank: index + 1,
             username: user.username,
-            score: user.score,
+            score: user.total_score,
           }));
           setScoreboardData(formattedData);
         }

@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION add_solved_challenge(
-  p_user_id TEXT,
+  p_user_id UUID,
   p_challenge_id INT,
   p_submitted_flag TEXT
 )
