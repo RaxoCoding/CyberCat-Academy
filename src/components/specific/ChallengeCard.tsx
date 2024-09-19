@@ -23,7 +23,7 @@ export function ChallengeCard({ challenge, solvedDate }: ChallengeCardProps) {
         <CardContent>
           <div className="flex flex-wrap mb-3">
           {challenge.tags.map((tag) => (
-            <span key={tag} className="text-muted-foreground text-xs bg-primary text-primary-foreground px-2 py-1 rounded-md m-1">
+            <span key={tag} className="text-muted-foreground text-xs bg-primary text-primary-foreground px-2 py-1 rounded-md m-1 truncate">
               {tag}
             </span>
           ))}

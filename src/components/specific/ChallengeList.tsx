@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChallengeCard } from "./ChallengeCard";
 import {
   Table,
@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, List } from "lucide-react";
+import { LayoutGrid, List, Minus, Plus } from "lucide-react";
 import type { Database } from "@/types/supabase";
 import { useRouter } from "next/navigation";
 
@@ -29,20 +29,63 @@ export default function ChallengeList({
   defaultViewMode = "card",
 }: ChallengeListProps) {
   const [viewMode, setViewMode] = useState<"card" | "table">(defaultViewMode);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [showAllTags, setShowAllTags] = useState(false);
+  const [filteredChallenges, setFilteredChallenges] = useState(challenges);
   const router = useRouter();
+
+  const allTags = Array.from(new Set(challenges.flatMap(challenge => challenge.tags)));
+  const visibleTags = showAllTags ? allTags : allTags.slice(0, 5);
+
+  useEffect(() => {
+    setFilteredChallenges(
+      challenges.filter(challenge =>
+        selectedTags.length === 0 || selectedTags.every(tag => challenge.tags.includes(tag))
+      )
+    );
+  }, [challenges, selectedTags]);
 
   const toggleViewMode = () => {
     setViewMode(viewMode === "card" ? "table" : "card");
   };
 
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+
   return (
     <div>
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 grid grid-cols-[1fr_auto] gap-4 items-start">
+        <div className="flex flex-wrap gap-2 items-center">
+          {visibleTags.map(tag => (
+            <Button
+              key={tag}
+              variant={selectedTags.includes(tag) ? "default" : "outline"}
+              size="sm"
+              onClick={() => toggleTag(tag)}
+              className="max-w-[200px]" // Limit the maximum width of the button
+            >
+              <span className="truncate">{tag}</span>
+            </Button>
+          ))}
+          {allTags.length > 5 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAllTags(!showAllTags)}
+            >
+              {showAllTags ? <Minus className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+              {showAllTags ? "Show Less" : "Show More"}
+            </Button>
+          )}
+        </div>
         <Button
           onClick={toggleViewMode}
           variant="ghost"
           size="sm"
-          className="bg-inherit"
+          className="bg-inherit justify-self-end"
         >
           {viewMode === "card" ? (
             <List className="h-4 w-4 mr-2" />
@@ -55,7 +98,7 @@ export default function ChallengeList({
 
       {viewMode === "card" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {challenges.map((challenge) => (
+          {filteredChallenges.map((challenge) => (
             <ChallengeCard
               key={challenge.id}
               challenge={challenge}
@@ -71,11 +114,12 @@ export default function ChallengeList({
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Points</TableHead>
+                <TableHead>Tags</TableHead>
                 {showSolvedDate && <TableHead>Solved Date</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {challenges.map((challenge) => (
+              {filteredChallenges.map((challenge) => (
                 <TableRow
                   key={challenge.id}
                   className="cursor-pointer hover:bg-accent"
@@ -84,6 +128,7 @@ export default function ChallengeList({
                   <TableCell>{challenge.name}</TableCell>
                   <TableCell>{challenge.description}</TableCell>
                   <TableCell>{challenge.points}</TableCell>
+                  <TableCell>{challenge.tags.join(", ")}</TableCell>
                   {showSolvedDate && challenge.created_at && (
                     <TableCell>
                       {new Date(challenge.created_at).toLocaleDateString()}
