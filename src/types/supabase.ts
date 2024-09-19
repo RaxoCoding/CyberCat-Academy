@@ -58,6 +58,10 @@ export interface Database {
                     category_id: number
                     created_at: string
                     flag: string
+                    url: string
+                    flags: string[]
+                    ressources: string[]
+                    writeups: string[]
                 }
                 Insert: {
                     id?: number
@@ -67,6 +71,10 @@ export interface Database {
                     category_id: number
                     created_at?: string
                     flag: string
+                    url: string
+                    flags: string[]
+                    ressources: string[]
+                    writeups: string[]
                 }
                 Update: {
                     id?: number
@@ -76,6 +84,10 @@ export interface Database {
                     category_id?: number
                     created_at?: string
                     flag?: string
+                    url?: string
+                    flags?: string[]
+                    ressources?: string[]
+                    writeups?: string[]
                 }
             }
         }
@@ -88,6 +100,11 @@ export interface Database {
                     points: number
                     category_id: number
                     created_at: string
+                    url: string
+                    flags: string[]
+                    tags: string[]
+                    ressources: string[]
+                    writeups: string[]
                 }
                 Insert: {
                     id?: number
@@ -96,6 +113,11 @@ export interface Database {
                     points: number
                     category_id: number
                     created_at?: string
+                    url?: string
+                    flags?: string[]
+                    ressources?: string[]
+                    writeups?: string[]
+                    tags?: string[]
                 }
                 Update: {
                     id?: number
@@ -104,6 +126,11 @@ export interface Database {
                     points?: number
                     category_id?: number
                     created_at?: string
+                    url?: string
+                    flags?: string[]
+                    ressources?: string[]
+                    writeups?: string[]
+                    tags?: string[]
                 }
             }
             user_scores: {

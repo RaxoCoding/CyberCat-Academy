@@ -20,6 +20,13 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
           <CardTitle>{challenge.name}</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="flex flex-wrap mb-3">
+          {challenge.tags.map((tag) => (
+            <span key={tag} className="text-muted-foreground text-xs bg-primary text-primary-foreground px-2 py-1 rounded-md m-1">
+              {tag}
+            </span>
+          ))}
+          </div>
           <p className="text-muted-foreground">{challenge.description}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center">
