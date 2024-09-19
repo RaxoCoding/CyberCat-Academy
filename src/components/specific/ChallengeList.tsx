@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { LayoutGrid, List, Minus, Plus } from "lucide-react";
 import type { Database } from "@/types/supabase";
 import { useRouter } from "next/navigation";
+import { ChallengeTag } from "@/components/common/ChallengeTag";
 
 type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
   created_at?: string;
@@ -58,17 +59,14 @@ export default function ChallengeList({
   return (
     <div>
       <div className="mb-4 grid grid-cols-[1fr_auto] gap-4 items-start">
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="flex flex-wrap items-center">
           {visibleTags.map(tag => (
-            <Button
+            <ChallengeTag
               key={tag}
-              variant={selectedTags.includes(tag) ? "default" : "outline-transparent"}
-              size="sm"
+              tag={tag}
+              isSelected={selectedTags.includes(tag)}
               onClick={() => toggleTag(tag)}
-              className="max-w-[200px]" // Limit the maximum width of the button
-            >
-              <span className="truncate">{tag}</span>
-            </Button>
+            />
           ))}
           {allTags.length > 5 && (
             <Button

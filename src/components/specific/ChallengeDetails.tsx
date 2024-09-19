@@ -9,13 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Swords,
   Goal,
-  Tag,
   Link,
   FileText,
   Trophy,
   Clock,
   Users,
 } from "lucide-react";
+import { ChallengeTag } from "@/components/common/ChallengeTag";
 
 type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
@@ -110,13 +110,7 @@ export default function ChallengeDetails({
           <p className="text-lg mb-4">{challenge.description}</p>
           <div className="flex flex-wrap gap-2 mb-4">
             {challenge.tags.map((tag) => (
-              <span
-                key={tag}
-                className="flex items-center text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full"
-              >
-                <Tag className="w-3 h-3 mr-1" />
-                {tag}
-              </span>
+              <ChallengeTag key={tag} tag={tag} alwaysPrimary />
             ))}
           </div>
           <div className="space-y-2 mb-4">

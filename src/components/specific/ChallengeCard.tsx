@@ -7,6 +7,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Database } from "@/types/supabase";
+import { ChallengeTag } from "@/components/common/ChallengeTag";
 
 interface ChallengeCardProps {
   challenge: Database["public"]["Views"]["public_challenges"]["Row"];
@@ -22,11 +23,9 @@ export function ChallengeCard({ challenge, solvedDate }: ChallengeCardProps) {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap mb-3">
-          {challenge.tags.map((tag) => (
-            <span key={tag} className="text-muted-foreground text-xs bg-primary text-primary-foreground px-2 py-1 rounded-md m-1 truncate">
-              {tag}
-            </span>
-          ))}
+            {challenge.tags.map((tag) => (
+              <ChallengeTag key={tag} tag={tag} alwaysPrimary />
+            ))}
           </div>
           <p className="text-muted-foreground">{challenge.description}</p>
         </CardContent>
