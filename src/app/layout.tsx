@@ -12,7 +12,7 @@ import { Database } from '@/types/supabase';
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-type DBUser = Database["public"]["Tables"]["users"]["Row"];
+type DBUser = Database["public"]["Views"]["user_scores"]["Row"];
 
 export default function RootLayout({
   children,

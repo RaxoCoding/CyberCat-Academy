@@ -14,7 +14,7 @@ export default function CategoryPage() {
     Database["public"]["Tables"]["categories"]["Row"] | null
   >(null);
   const [challenges, setChallenges] = useState<
-    Database["public"]["Tables"]["challenges"]["Row"][] | null
+    Database["public"]["Views"]["public_challenges"]["Row"][] | null
   >(null);
   const [error, setError] = useState<string | null>(null);
 

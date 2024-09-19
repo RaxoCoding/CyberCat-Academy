@@ -11,7 +11,7 @@ export default function ChallengePage() {
   const { supabase, loading } = useSupabaseAuth();
   const params = useParams();
   const [challenge, setChallenge] = useState<
-    Database["public"]["Tables"]["challenges"]["Row"] | null
+    Database["public"]["Views"]["public_challenges"]["Row"] | null
   >(null);
   const [error, setError] = useState<string | null>(null);
 
