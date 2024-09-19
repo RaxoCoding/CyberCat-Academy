@@ -20,7 +20,7 @@ export default function ScoreboardPage() {
     async function fetchScoreboardData() {
       if (!loading) {
         const { data, error } = await supabase
-          .from("users")
+          .from("user_scores")
           .select("username, score")
           .order("score", { ascending: false })
           .limit(10);

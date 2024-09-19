@@ -27,7 +27,7 @@ export default function RootLayout({
     async function getUser() {
       if (userAuth) {
         const { data: userData, error: profileError } = await supabase
-          .from("users")
+          .from("user_scores")
           .select("*")
           .eq("id", userAuth.id)
           .single();
