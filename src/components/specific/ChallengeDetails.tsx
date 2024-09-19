@@ -7,13 +7,17 @@ import type { Database } from '@/types/supabase'
 import { Button } from '@/components/ui/button';
 import { Swords, Goal } from 'lucide-react';
 
-type Challenge = Database['public']['Tables']['challenges']['Row']
+type Challenge = Database['public']['Views']['public_challenges']['Row']
 
 export default function ChallengeDetails({ challenge }: { challenge: Challenge }) {
   const [flag, setFlag] = useState('')
   const [message, setMessage] = useState('')
   const supabase = createClientComponentClient<Database>()
-  const { user: userAuth, supabase2, loading } = useSupabaseAuth();
+  const { user: userAuth } = useSupabaseAuth();
+
+  if (!userAuth) {
+    return <div>For authenticated user only...</div>
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,7 +44,7 @@ export default function ChallengeDetails({ challenge }: { challenge: Challenge }
     const blob = new Blob([dummyData], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = challenge.url
+    a.href = url
     a.download = `${challenge.name}_file.txt`
     document.body.appendChild(a)
     a.click()

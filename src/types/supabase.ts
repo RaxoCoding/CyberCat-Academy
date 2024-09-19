@@ -80,7 +80,7 @@ export interface Database {
             }
         }
         Views: {
-            challenges_public: {
+            public_challenges: {
                 Row: {
                     id: number
                     name: string
@@ -114,13 +114,13 @@ export interface Database {
                     challenges_solved: number
                 }
                 Insert: {
-                    user_id?: string
+                    user_id: string
                     username?: string
                     total_score?: number
                     challenges_solved?: number
                 }
                 Update: {
-                    user_id?: string
+                    user_id: string
                     username?: string
                     total_score?: number
                     challenges_solved?: number

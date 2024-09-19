@@ -1,7 +1,7 @@
 import { ChallengeCard } from "./ChallengeCard";
 import type { Database } from "@/types/supabase";
 
-type Challenge = Database["public"]["Tables"]["challenges"]["Row"];
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
 interface ChallengeListProps {
   challenges: Challenge[];

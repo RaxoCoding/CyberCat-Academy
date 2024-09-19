@@ -9,7 +9,7 @@ import {
 import { Database } from "@/types/supabase";
 
 interface ChallengeCardProps {
-  challenge: Database["public"]["Tables"]["challenges"]["Row"];
+  challenge: Database["public"]["Views"]["public_challenges"]["Row"];
 }
 
 export function ChallengeCard({ challenge }: ChallengeCardProps) {
