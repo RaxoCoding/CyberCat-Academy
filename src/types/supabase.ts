@@ -106,7 +106,7 @@ export interface Database {
                     created_at?: string
                 }
             }
-            users_public: {
+            user_scores: {
                 Row: {
                     id: string
                     username: string
