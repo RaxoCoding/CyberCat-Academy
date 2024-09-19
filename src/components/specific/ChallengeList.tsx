@@ -64,7 +64,7 @@ export default function ChallengeList({
           ))}
         </div>
       ) : (
-        <div className="rounded-md border">
+        <div className="bg-card text-card-foreground rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
