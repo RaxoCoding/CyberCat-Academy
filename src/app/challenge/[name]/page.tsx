@@ -40,7 +40,6 @@ export default function ChallengePage() {
 
   return (
     <div className="bg-background text-white">
-      <h1 className="text-4xl font-bold mb-8">{challenge.name}</h1>
       <ChallengeDetails challenge={challenge} />
     </div>
   );
