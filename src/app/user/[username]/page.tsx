@@ -61,7 +61,8 @@ export default function UserProfilePage() {
               name,
               description,
               points,
-              category_id
+              category_id,
+							tags
             )
           `
           )
