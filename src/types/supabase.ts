@@ -58,6 +58,10 @@ export interface Database {
                     category_id: number
                     created_at: string
                     flag: string
+                    url: string
+                    flags: string[]
+                    ressources: string[]
+                    writeups: string[]
                 }
                 Insert: {
                     id?: number
@@ -67,6 +71,10 @@ export interface Database {
                     category_id: number
                     created_at?: string
                     flag: string
+                    url: string
+                    flags: string[]
+                    ressources: string[]
+                    writeups: string[]
                 }
                 Update: {
                     id?: number
@@ -76,6 +84,10 @@ export interface Database {
                     category_id?: number
                     created_at?: string
                     flag?: string
+                    url?: string
+                    flags?: string[]
+                    ressources?: string[]
+                    writeups?: string[]
                 }
             }
         }
