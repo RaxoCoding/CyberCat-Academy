@@ -35,13 +35,18 @@ export default function ChallengeList({
   const [filteredChallenges, setFilteredChallenges] = useState(challenges);
   const router = useRouter();
 
-  const allTags = Array.from(new Set(challenges.flatMap(challenge => challenge.tags)));
+  const allTags = Array.from(
+    new Set(challenges.flatMap((challenge) => challenge.tags || []))
+  );
   const visibleTags = showAllTags ? allTags : allTags.slice(0, 5);
 
   useEffect(() => {
     setFilteredChallenges(
-      challenges.filter(challenge =>
-        selectedTags.length === 0 || selectedTags.every(tag => challenge.tags.includes(tag))
+      challenges.filter(
+        (challenge) =>
+          selectedTags.length === 0 ||
+          (challenge.tags &&
+            selectedTags.every((tag) => challenge.tags!.includes(tag)))
       )
     );
   }, [challenges, selectedTags]);
@@ -51,8 +56,8 @@ export default function ChallengeList({
   };
 
   const toggleTag = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   };
 
@@ -60,7 +65,7 @@ export default function ChallengeList({
     <div>
       <div className="mb-4 grid grid-cols-[1fr_auto] gap-4 items-start">
         <div className="flex flex-wrap items-center">
-          {visibleTags.map(tag => (
+          {visibleTags.map((tag) => (
             <ChallengeTag
               key={tag}
               tag={tag}
@@ -74,7 +79,11 @@ export default function ChallengeList({
               size="sm"
               onClick={() => setShowAllTags(!showAllTags)}
             >
-              {showAllTags ? <Minus className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+              {showAllTags ? (
+                <Minus className="h-4 w-4 mr-2" />
+              ) : (
+                <Plus className="h-4 w-4 mr-2" />
+              )}
               {showAllTags ? "Show Less" : "Show More"}
             </Button>
           )}
@@ -126,7 +135,9 @@ export default function ChallengeList({
                   <TableCell>{challenge.name}</TableCell>
                   <TableCell>{challenge.description}</TableCell>
                   <TableCell>{challenge.points}</TableCell>
-                  <TableCell>{challenge.tags.join(", ")}</TableCell>
+                  <TableCell>
+                    {challenge.tags ? challenge.tags.join(", ") : ""}
+                  </TableCell>
                   {showSolvedDate && challenge.created_at && (
                     <TableCell>
                       {new Date(challenge.created_at).toLocaleDateString()}

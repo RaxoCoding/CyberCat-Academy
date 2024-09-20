@@ -22,11 +22,13 @@ export function ChallengeCard({ challenge, solvedDate }: ChallengeCardProps) {
           <CardTitle>{challenge.name}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap mb-3">
-            {challenge.tags.map((tag) => (
-              <ChallengeTag key={tag} tag={tag} alwaysPrimary />
-            ))}
-          </div>
+          {challenge.tags && challenge.tags.length > 0 && (
+            <div className="flex flex-wrap mb-3">
+              {challenge.tags.map((tag) => (
+                <ChallengeTag key={tag} tag={tag} alwaysPrimary />
+              ))}
+            </div>
+          )}
           <p className="text-muted-foreground">{challenge.description}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center">

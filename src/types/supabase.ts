@@ -52,42 +52,48 @@ export interface Database {
             challenges: {
                 Row: {
                     id: number
-                    name: string
+                    created_at: string
                     description: string
+                    name: string
                     points: number
                     category_id: number
-                    created_at: string
                     flag: string
-                    url: string
-                    flags: string[]
-                    ressources: string[]
-                    writeups: string[]
+                    url: string | null
+                    writeups: string[] | null
+                    tags: string[] | null
+                    ressources: string[] | null
+                    author_id: string | null
+                    files: string[] | null
                 }
                 Insert: {
                     id?: number
+                    created_at?: string
+                    description?: string
                     name: string
-                    description: string
                     points: number
                     category_id: number
-                    created_at?: string
-                    flag: string
-                    url: string
-                    flags: string[]
-                    ressources: string[]
-                    writeups: string[]
+                    flag?: string
+                    url?: string | null
+                    writeups?: string[] | null
+                    tags?: string[] | null
+                    ressources?: string[] | null
+                    author_id?: string | null
+                    files?: string[] | null
                 }
                 Update: {
                     id?: number
-                    name?: string
+                    created_at?: string
                     description?: string
+                    name?: string
                     points?: number
                     category_id?: number
-                    created_at?: string
                     flag?: string
-                    url?: string
-                    flags?: string[]
-                    ressources?: string[]
-                    writeups?: string[]
+                    url?: string | null
+                    writeups?: string[] | null
+                    tags?: string[] | null
+                    ressources?: string[] | null
+                    author_id?: string | null
+                    files?: string[] | null
                 }
             }
             users_link_challenges: {
@@ -114,41 +120,18 @@ export interface Database {
                     id: number
                     name: string
                     description: string
-                    points: number
-                    category_id: number
                     created_at: string
-                    url: string
-                    flags: string[]
-                    tags: string[]
-                    ressources: string[]
-                    writeups: string[]
-                }
-                Insert: {
-                    id?: number
-                    name: string
-                    description: string
                     points: number
                     category_id: number
-                    created_at?: string
-                    url?: string
-                    flags?: string[]
-                    ressources?: string[]
-                    writeups?: string[]
-                    tags?: string[]
+                    url: string | null
+                    writeups: string[] | null
+                    ressources: string[] | null
+                    files: string[] | null
+                    tags: string[] | null
+                    author_id: string | null
                 }
-                Update: {
-                    id?: number
-                    name?: string
-                    description?: string
-                    points?: number
-                    category_id?: number
-                    created_at?: string
-                    url?: string
-                    flags?: string[]
-                    ressources?: string[]
-                    writeups?: string[]
-                    tags?: string[]
-                }
+                Insert: never
+                Update: never
             }
             user_scores: {
                 Row: {
@@ -158,20 +141,8 @@ export interface Database {
                     challenges_solved: number
                     created_at: string
                 }
-                Insert: {
-                    user_id: string
-                    username?: string
-                    total_score?: number
-                    challenges_solved?: number
-                    created_at?: string
-                }
-                Update: {
-                    user_id: string
-                    username?: string
-                    total_score?: number
-                    challenges_solved?: number
-                    created_at?: string
-                }
+                Insert: never
+                Update: never
             }
         }
         Functions: {

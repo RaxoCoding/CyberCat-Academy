@@ -7,15 +7,17 @@ import type { Database } from "@/types/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Swords,
   Goal,
-  Link,
   FileText,
   Trophy,
   Clock,
   Users,
+  Download,
+  User,
+  ExternalLink,
 } from "lucide-react";
 import { ChallengeTag } from "@/components/common/ChallengeTag";
+import Link from "next/link";
 
 type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
@@ -30,6 +32,7 @@ export default function ChallengeDetails({
   const [solveHistory, setSolveHistory] = useState<
     { username: string; solved_at: string }[]
   >([]);
+  const [author, setAuthor] = useState<{ username: string } | null>(null);
   const supabase = createClientComponentClient<Database>();
   const { user: userAuth } = useSupabaseAuth();
 
@@ -57,10 +60,22 @@ export default function ChallengeDetails({
           solved_at: new Date(item.created_at).toLocaleString(),
         })) || []
       );
+
+      if (challenge.author_id) {
+        const { data: authorData } = await supabase
+          .from("users")
+          .select("username")
+          .eq("id", challenge.author_id)
+          .single();
+
+        if (authorData) {
+          setAuthor(authorData);
+        }
+      }
     }
 
     fetchSolveData();
-  }, [supabase, challenge.id]);
+  }, [supabase, challenge.id, challenge.author_id]);
 
   if (!userAuth) {
     return <div>For authenticated users only...</div>;
@@ -93,8 +108,12 @@ export default function ChallengeDetails({
     }
   };
 
-  const handleDownload = () => {
-    window.open(challenge.url, "_blank");
+  const getFileUrl = (filePath: string) => {
+    const { data } = supabase.storage
+      .from("challenge-files")
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
   };
 
   return (
@@ -105,36 +124,72 @@ export default function ChallengeDetails({
             <span>{challenge.name}</span>
             <span className="text-xl font-normal">{challenge.points} pts</span>
           </CardTitle>
+          {author && (
+            <div className="flex items-center text-sm text-muted-foreground">
+              <User className="w-4 h-4 mr-2" />
+              <span>Author: {author.username}</span>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <p className="text-lg mb-4">{challenge.description}</p>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {challenge.tags.map((tag) => (
-              <ChallengeTag key={tag} tag={tag} alwaysPrimary />
-            ))}
-          </div>
-          <div className="space-y-2 mb-4">
-            {challenge.ressources.map((resource) => (
+          {challenge.tags && challenge.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {challenge.tags.map((tag) => (
+                <ChallengeTag key={tag} tag={tag} alwaysPrimary />
+              ))}
+            </div>
+          )}
+          {challenge.url && (
+            <div className="mb-4">
               <a
-                key={resource}
-                href={resource}
+                href={challenge.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-primary hover:underline"
               >
-                <Link className="w-4 h-4 mr-2" />
-                {resource}
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Challenge Website
               </a>
-            ))}
-          </div>
-          <Button
-            className="w-full mb-4"
-            variant="default"
-            onClick={handleDownload}
-          >
-            <Swords className="mr-2 h-4 w-4" />
-            Start Challenge
-          </Button>
+            </div>
+          )}
+          {challenge.ressources && challenge.ressources.length > 0 && (
+            <div className="space-y-2 mb-4">
+              {challenge.ressources.map((resource) => (
+                <a
+                  key={resource}
+                  href={resource}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-primary hover:underline"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  {resource}
+                </a>
+              ))}
+            </div>
+          )}
+          {challenge.files && challenge.files.length > 0 && (
+            <div className="space-y-2 mb-4">
+              {challenge.files.map((file) => (
+                <Link
+                  key={file}
+                  href={getFileUrl(file)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  passHref
+                >
+                  <Button
+                    variant="outline-transparent"
+                    className="w-full text-left"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    {file.split("/").pop()}
+                  </Button>
+                </Link>
+              ))}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="flag" className="block text-sm font-medium mb-1">
@@ -203,7 +258,7 @@ export default function ChallengeDetails({
         </CardContent>
       </Card>
 
-      {challenge.writeups.length > 0 && (
+      {challenge.writeups && challenge.writeups.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -221,7 +276,7 @@ export default function ChallengeDetails({
                     rel="noopener noreferrer"
                     className="flex items-center text-primary hover:underline"
                   >
-                    <Link className="w-4 h-4 mr-2" />
+                    <ExternalLink className="w-4 h-4 mr-2" />
                     {writeup}
                   </a>
                 </li>
