@@ -1,5 +1,7 @@
+DROP VIEW IF EXISTS public_challenges;
+
 CREATE VIEW public_challenges AS
-SELECT id, name, description, points, category_id, tags, url, writeups, ressources
+SELECT id, name, description, points, created_at, category_id, tags, url, writeups, ressources, files, author_id
 FROM challenges;
 
 GRANT SELECT ON public_challenges TO public;
