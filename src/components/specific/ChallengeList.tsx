@@ -64,7 +64,7 @@ export default function ChallengeList({
   return (
     <div>
       <div className="mb-4 grid grid-cols-[1fr_auto] gap-4 items-start">
-        <div className="flex flex-wrap items-center">
+        <div className="flex flex-wrap items-center gap-2">
           {visibleTags.map((tag) => (
             <ChallengeTag
               key={tag}

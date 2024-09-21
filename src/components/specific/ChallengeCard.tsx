@@ -23,7 +23,7 @@ export function ChallengeCard({ challenge, solvedDate }: ChallengeCardProps) {
         </CardHeader>
         <CardContent>
           {challenge.tags && challenge.tags.length > 0 && (
-            <div className="flex flex-wrap mb-3">
+            <div className="flex flex-wrap mb-3 gap-2">
               {challenge.tags.map((tag) => (
                 <ChallengeTag key={tag} tag={tag} alwaysPrimary />
               ))}

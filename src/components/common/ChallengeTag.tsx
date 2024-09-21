@@ -12,7 +12,7 @@ export function ChallengeTag({ tag, onClick, isSelected = false, alwaysPrimary =
   return (
     <span
       onClick={onClick}
-      className={`flex items-center text-xs px-2 py-1 rounded-full m-1 truncate cursor-pointer transition-colors ${
+      className={`flex items-center text-xs px-2 py-1 rounded-full truncate cursor-pointer transition-colors ${
         isSelected || alwaysPrimary
           ? 'bg-primary text-primary-foreground'
           : 'bg-secondary text-secondary-foreground hover:bg-primary/80 hover:text-primary-foreground'

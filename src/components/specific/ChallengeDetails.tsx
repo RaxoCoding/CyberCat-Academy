@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
 import type { Database } from "@/types/supabase";
@@ -33,8 +33,28 @@ export default function ChallengeDetails({
     { username: string; solved_at: string }[]
   >([]);
   const [author, setAuthor] = useState<{ username: string } | null>(null);
-  const supabase = createClientComponentClient<Database>();
-  const { user: userAuth } = useSupabaseAuth();
+  const { user: userAuth, supabase } = useSupabaseAuth();
+  const [fileUrls, setFileUrls] = useState<Record<string, string>>({});
+
+  const getFileUrl = useCallback(async (filePath: string) => {
+    const splitPath = filePath.split("/");
+    const fileName = splitPath.pop();
+    const challengeName =  splitPath.pop();
+    const downloadName = challengeName + "-" + fileName;
+
+    const { data, error } = await supabase.storage
+      .from("challenge_files")
+      .createSignedUrl(filePath, 3600, { download: downloadName  }); // URL valid for 1 hour
+
+    console.log(filePath);
+
+    if (error) {
+      console.error("Error creating signed URL:", error);
+      return null;
+    }
+
+    return data.signedUrl;
+  }, [supabase]);
 
   useEffect(() => {
     async function fetchSolveData() {
@@ -77,6 +97,17 @@ export default function ChallengeDetails({
     fetchSolveData();
   }, [supabase, challenge.id, challenge.author_id]);
 
+  useEffect(() => {
+    if (challenge.files) {
+      challenge.files.forEach(async (file) => {
+        const url = await getFileUrl(file);
+        if (url) {
+          setFileUrls(prev => ({ ...prev, [file]: url }));
+        }
+      });
+    }
+  }, [challenge.files, getFileUrl]);
+
   if (!userAuth) {
     return <div>For authenticated users only...</div>;
   }
@@ -106,14 +137,6 @@ export default function ChallengeDetails({
     } else {
       setMessage("Incorrect flag. Try again!");
     }
-  };
-
-  const getFileUrl = (filePath: string) => {
-    const { data } = supabase.storage
-      .from("challenge-files")
-      .getPublicUrl(filePath);
-
-    return data.publicUrl;
   };
 
   return (
@@ -170,18 +193,19 @@ export default function ChallengeDetails({
             </div>
           )}
           {challenge.files && challenge.files.length > 0 && (
-            <div className="space-y-2 mb-4">
+            <div className="space-x-2 mb-4">
               {challenge.files.map((file) => (
                 <Link
                   key={file}
-                  href={getFileUrl(file)}
+                  href={fileUrls[file] || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   passHref
                 >
                   <Button
                     variant="outline-transparent"
-                    className="w-full text-left"
+                    className="text-left"
+                    disabled={!fileUrls[file]}
                   >
                     <Download className="w-4 h-4 mr-2" />
                     {file.split("/").pop()}
