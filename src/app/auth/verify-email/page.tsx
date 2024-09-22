@@ -18,7 +18,7 @@ export default function VerifyEmail() {
             Verify Your Email
           </CardTitle>
           <CardDescription className="text-center">
-            We've sent you an email with a verification link. Please check your inbox and click the link to verify your account.
+            We&apos;ve sent you an email with a verification link. Please check your inbox and click the link to verify your account.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">

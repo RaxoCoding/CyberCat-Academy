@@ -114,7 +114,7 @@ export default function Auth() {
                 href="/auth/sign-up"
                 className="text-sm text-primary hover:underline block"
               >
-                Don't have an account? Sign up
+                Don&apos;t have an account? Sign up
               </Link>
             </div>
           </div>
