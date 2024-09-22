@@ -38,6 +38,7 @@ export default function SignUp() {
           data: {
             username,
           },
+					emailRedirectTo: `${window.location.origin}/`
         },
       });
 
@@ -45,18 +46,7 @@ export default function SignUp() {
         throw error;
       }
 
-      if (data.user) {
-        // Insert the user into the public.users table
-        const { error: insertError } = await supabase
-          .from('users')
-          .insert({ id: data.user.id, username });
-
-        if (insertError) {
-          throw insertError;
-        }
-
-        router.push('/auth/verify-email');
-      }
+      router.push('/auth/verify-email');
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
