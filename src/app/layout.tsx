@@ -120,7 +120,7 @@ export default function RootLayout({
                 </div>
               ) : (
                 <Button asChild className="w-full md:w-auto">
-                  <Link href="/auth">
+                  <Link href="/auth/sign-in">
                     <LogIn className="mr-2 h-4 w-4" />
                     Login / Sign Up
                   </Link>
