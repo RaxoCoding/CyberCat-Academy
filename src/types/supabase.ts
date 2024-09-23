@@ -154,6 +154,10 @@ export interface Database {
                 Args: { p_user_id: string; p_challenge_id: number; p_submitted_flag: string }
                 Returns: boolean
             }
+            delete_user: {
+                Args: Record<PropertyKey, never>
+                Returns: void
+            }
         }
         Enums: {
             [_ in never]: never

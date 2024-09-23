@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import type { Database } from "@/types/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

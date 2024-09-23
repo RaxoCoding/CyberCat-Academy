@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ChallengeList from "@/components/specific/ChallengeList";
 import { Database } from "@/types/supabase";

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { Scoreboard } from "@/components/specific/Scoreboard";
 import ScoreboardPageLoading from './loading';
 

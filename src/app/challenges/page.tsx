@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { useSupabaseAuth } from "@/hooks/useSupbaseAuth";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import CategoryList from '@/components/specific/CategoryList';
 import { Database } from '@/types/supabase';
 import ChallengesLoading from './loading';
