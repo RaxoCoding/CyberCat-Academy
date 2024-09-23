@@ -55,8 +55,8 @@ export default function RootLayout({
   }, [userAuth, supabase])
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push("/")
+    await supabase.auth.signOut();
+    router.push("/");
   }
 
   return (
