@@ -14,16 +14,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { handleError } from "@/utils/errorHandler";
+import { toast } from "sonner";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
   const [sendResetLoading, setSendResetLoading] = useState(false);
   const { supabase, loading } = useSupabaseAuth();
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
     setSendResetLoading(true);
 
     try {
@@ -35,13 +35,9 @@ export default function ForgotPassword() {
         throw error;
       }
 
-      setMessage("Password reset email sent. Check your inbox.");
+      toast.success("Password reset email sent. Check your inbox.");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setMessage(error.message);
-      } else {
-        setMessage("An unknown error occurred");
-      }
+      toast.error(handleError(error));
     } finally {
       setSendResetLoading(false);
     }
@@ -81,8 +77,6 @@ export default function ForgotPassword() {
               Send Reset Email
             </Button>
           </form>
-
-          {message && <p className="mt-4 text-center text-sm">{message}</p>}
 
           <div className="mt-4 text-center">
             <Link

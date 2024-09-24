@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { ChallengeTag } from "@/components/common/ChallengeTag";
 import Link from "next/link";
+import { toast } from "sonner";
 
 type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
@@ -26,7 +27,6 @@ export default function ChallengeDetails({
   challenge: Challenge;
 }) {
   const [flag, setFlag] = useState("");
-  const [message, setMessage] = useState("");
   const [solves, setSolves] = useState(0);
   const [solveHistory, setSolveHistory] = useState<
     { username: string; solved_at: string }[]
@@ -38,14 +38,12 @@ export default function ChallengeDetails({
   const getFileUrl = useCallback(async (filePath: string) => {
     const splitPath = filePath.split("/");
     const fileName = splitPath.pop();
-    const challengeName =  splitPath.pop();
+    const challengeName = splitPath.pop();
     const downloadName = challengeName + "-" + fileName;
 
     const { data, error } = await supabase.storage
       .from("challenge_files")
-      .createSignedUrl(filePath, 3600, { download: downloadName  }); // URL valid for 1 hour
-
-    console.log(filePath);
+      .createSignedUrl(filePath, 3600, { download: downloadName }); // URL valid for 1 hour
 
     if (error) {
       console.error("Error creating signed URL:", error);
@@ -101,7 +99,7 @@ export default function ChallengeDetails({
       challenge.files.forEach(async (file) => {
         const url = await getFileUrl(file);
         if (url) {
-          setFileUrls(prev => ({ ...prev, [file]: url }));
+          setFileUrls((prev) => ({ ...prev, [file]: url }));
         }
       });
     }
@@ -113,7 +111,6 @@ export default function ChallengeDetails({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
 
     const { data, error } = await supabase.rpc("add_solved_challenge", {
       p_user_id: userAuth.id,
@@ -122,9 +119,9 @@ export default function ChallengeDetails({
     });
 
     if (error) {
-      setMessage("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } else if (data) {
-      setMessage("Congratulations! You solved the challenge!");
+      toast.success("Congratulations! You solved the challenge!");
       setSolves(solves + 1);
       setSolveHistory([
         {
@@ -134,7 +131,7 @@ export default function ChallengeDetails({
         ...solveHistory,
       ]);
     } else {
-      setMessage("Incorrect flag. Try again!");
+      toast.error("Incorrect flag. Try again!");
     }
   };
 
@@ -196,7 +193,7 @@ export default function ChallengeDetails({
               {challenge.files.map((file) => (
                 <Link
                   key={file}
-                  href={fileUrls[file] || '#'}
+                  href={fileUrls[file] || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                   passHref
@@ -234,17 +231,6 @@ export default function ChallengeDetails({
               </div>
             </div>
           </form>
-          {message && (
-            <p
-              className={`mt-4 text-center ${
-                message.includes("Congratulations")
-                  ? "text-green-500"
-                  : "text-red-500"
-              }`}
-            >
-              {message}
-            </p>
-          )}
         </CardContent>
       </Card>
 

@@ -14,11 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { handleError } from "@/utils/errorHandler";
+import { toast } from "sonner";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
   const [resetLoading, setResetLoading] = useState(false);
   const { supabase, loading } = useSupabaseAuth();
   const router = useRouter();
@@ -38,11 +39,10 @@ export default function ResetPassword() {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
     setResetLoading(true);
 
     if (password !== confirmPassword) {
-      setMessage("Passwords do not match");
+      toast.error("Passwords do not match");
       setResetLoading(false);
       return;
     }
@@ -54,14 +54,10 @@ export default function ResetPassword() {
         throw error;
       }
 
-      setMessage("Password reset successfully. Redirecting to home...");
+      toast.success("Password reset successfully. Redirecting to home...");
       setTimeout(() => router.push("/"), 1000);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setMessage(error.message);
-      } else {
-        setMessage("An unknown error occurred");
-      }
+      toast.error(handleError(error));
     } finally {
       setResetLoading(false);
     }
@@ -111,14 +107,6 @@ export default function ResetPassword() {
               Reset Password
             </Button>
           </form>
-
-          {message && (
-            <p className={`mt-4 text-center text-sm ${
-              message.includes("successfully") ? "text-green-500" : "text-red-500"
-            }`}>
-              {message}
-            </p>
-          )}
         </CardContent>
       </Card>
     </div>

@@ -17,8 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ToastProvider } from "@/components/ui/toast"
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/sonner"
 
 type DBUser = Database["public"]["Views"]["user_scores"]["Row"]
 
@@ -70,7 +69,6 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <body>
-        <ToastProvider>
           <nav className="bg-card text-card-foreground p-4">
             <div className="container mx-auto flex justify-between items-center">
               <div className="flex items-center">
@@ -138,8 +136,7 @@ export default function RootLayout({
           <main className="bg-background text-foreground p-8">{children}</main>
           <Analytics />
           <SpeedInsights />
-          <Toaster />
-        </ToastProvider>
+          <Toaster richColors />
       </body>
     </html>
   )

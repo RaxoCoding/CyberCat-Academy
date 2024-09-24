@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Card,
@@ -15,47 +15,37 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { handleError } from "@/utils/errorHandler";
+import { toast } from "sonner";
 
-export default function SignUp() {
+export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState<string | null>(null);
-	const [signUpLoading, setSignUpLoading] = useState(false);
+  const [signInLoading, setSignInLoading] = useState(false);
   const { supabase, loading } = useSupabaseAuth();
 
-  const handleSignUp = async (e: React.FormEvent) => {
-		setSignUpLoading(true);
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setSignInLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          data: {
-            username,
-          },
-					emailRedirectTo: `${window.location.origin}/auth/email-verified`
-        },
       });
 
       if (error) {
         throw error;
       }
 
-      router.push('/auth/verify-email');
+      toast.success("Signed in successfully.");
+      router.push("/");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('An unknown error occurred');
-      }
+      toast.error(handleError(error));
     } finally {
-			setSignUpLoading(false);
-		}
+      setSignInLoading(false);
+    }
   };
 
   return (
@@ -63,23 +53,14 @@ export default function SignUp() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Sign Up
+            Sign In
           </CardTitle>
           <CardDescription className="text-center">
-            Create an account to get started
+            Choose your preferred sign in method
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignUp} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
+          <form onSubmit={handleSignIn} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -100,17 +81,30 @@ export default function SignUp() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading || signUpLoading}>
-							{signUpLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin"/>}
-              Sign Up
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading || signInLoading}
+            >
+              {signInLoading && (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              )}
+              Sign In
             </Button>
           </form>
 
-          {error && <p className="mt-4 text-center text-sm text-red-500">{error}</p>}
-
-          <div className="mt-4 text-center">
-            <Link href="/auth/sign-in" className="text-sm text-primary hover:underline">
-              Already have an account? Sign In
+          <div className="mt-4 text-center flex flex-col">
+            <Link
+              href="/auth/forgot-password"
+              className="text-sm text-primary hover:underline"
+            >
+              Forgot password?
+            </Link>
+            <Link
+              href="/auth/sign-up"
+              className="text-sm text-primary hover:underline"
+            >
+              Don&apos;t have an account? Sign Up
             </Link>
           </div>
         </CardContent>

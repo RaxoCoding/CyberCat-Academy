@@ -22,12 +22,12 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { handleError } from "@/utils/errorHandler";
 
 export default function UserSettings() {
   const router = useRouter();
   const { supabase, user, loading } = useSupabaseAuth();
-  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -59,25 +59,9 @@ export default function UserSettings() {
         throw updateError;
       }
 
-      toast({
-        title: "Success",
-        description: "Username updated successfully.",
-        variant: "default",
-      });
+      toast.success("Username updated successfully.");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "An unknown error occurred",
-          variant: "destructive",
-        });
-      }
+      toast.error(handleError(error));
     } finally {
       setLoadingState((prev) => ({ ...prev, updateUsername: false }));
     }
@@ -101,26 +85,9 @@ export default function UserSettings() {
         throw updateError;
       }
 
-      toast({
-        title: "Success",
-        description:
-          "Email update request sent. Please check your inbox to confirm the change.",
-        variant: "default",
-      });
+      toast.success("Email update request sent. Please check your inbox to confirm the change.");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "An unknown error occurred",
-          variant: "destructive",
-        });
-      }
+      toast.error(handleError(error));
     } finally {
       setLoadingState((prev) => ({ ...prev, updateEmail: false }));
     }
@@ -139,25 +106,9 @@ export default function UserSettings() {
         throw updateError;
       }
 
-      toast({
-        title: "Success",
-        description: "Password updated successfully.",
-        variant: "default",
-      });
+			toast.success("Password updated successfully.");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "An unknown error occurred",
-          variant: "destructive",
-        });
-      }
+      toast.error(handleError(error));
     } finally {
       setLoadingState((prev) => ({ ...prev, updatePassword: false }));
     }
@@ -173,22 +124,11 @@ export default function UserSettings() {
         throw deleteError;
       }
 
+			toast.success("Account deleted successfully.");
       await supabase.auth.signOut();
       router.push("/");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "An unknown error occurred",
-          variant: "destructive",
-        });
-      }
+      toast.error(handleError(error));
     } finally {
       setLoadingState((prev) => ({ ...prev, delete: false }));
     }
