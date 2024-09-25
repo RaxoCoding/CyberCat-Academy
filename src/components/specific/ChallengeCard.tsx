@@ -29,7 +29,7 @@ export function ChallengeCard({ challenge, solvedDate }: ChallengeCardProps) {
               ))}
             </div>
           )}
-          <p className="text-muted-foreground">{challenge.description}</p>
+          <p className="text-muted-foreground truncate">{challenge.description}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">
