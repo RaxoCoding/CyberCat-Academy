@@ -18,6 +18,7 @@ import {
 import { ChallengeTag } from "@/components/common/ChallengeTag";
 import Link from "next/link";
 import { toast } from "sonner";
+import MarkdownRenderer from "../ui/markdown";
 
 type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
@@ -151,7 +152,9 @@ export default function ChallengeDetails({
           )}
         </CardHeader>
         <CardContent>
-          <p className="text-lg mb-4">{challenge.description}</p>
+          <div className="text-lg mb-4">
+            <MarkdownRenderer content={challenge.description} />
+          </div>
           {challenge.tags && challenge.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {challenge.tags.map((tag) => (
