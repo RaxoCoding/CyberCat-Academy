@@ -16,7 +16,7 @@ interface ChallengeCardProps {
 
 export function ChallengeCard({ challenge, solvedDate }: ChallengeCardProps) {
   return (
-    <Link href={`/challenge/${challenge.name}`}>
+    <Link href={`/challenge/${challenge.name_id}`}>
       <Card className="hover:bg-accent transition-colors">
         <CardHeader>
           <CardTitle>{challenge.name}</CardTitle>

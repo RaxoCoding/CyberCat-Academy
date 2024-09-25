@@ -17,11 +17,11 @@ export default function ChallengePage() {
 
   useEffect(() => {
     async function fetchChallenge() {
-      if (!loading && params.name) {
+      if (!loading && params.name_id) {
         const { data, error } = await supabase
           .from("public_challenges")
           .select("*")
-          .eq("name", decodeURIComponent(params.name as string))
+          .eq("name_id", decodeURIComponent(params.name_id as string))
           .single();
         if (error) {
           console.error("Error fetching challenge:", error);
@@ -33,7 +33,7 @@ export default function ChallengePage() {
     }
 
     fetchChallenge();
-  }, [supabase, loading, params.name]);
+  }, [supabase, loading, params.name_id]);
 
   if (error) return <div>{error}</div>;
   if (!challenge) return <ChallengeLoading />;

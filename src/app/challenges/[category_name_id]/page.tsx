@@ -20,11 +20,11 @@ export default function CategoryPage() {
 
   useEffect(() => {
     async function fetchCategoryAndChallenges() {
-      if (!loading && params.category) {
+      if (!loading && params.category_name_id) {
         const { data: categoryData, error: categoryError } = await supabase
           .from("categories")
           .select("*")
-          .eq("name", decodeURIComponent(params.category as string))
+          .eq("name_id", decodeURIComponent(params.category_name_id as string))
           .single();
 
         if (categoryError) {
@@ -51,7 +51,7 @@ export default function CategoryPage() {
     }
 
     fetchCategoryAndChallenges();
-  }, [supabase, loading, params.category]);
+  }, [supabase, loading, params.category_name_id]);
 
   if (error) return <div>{error}</div>;
   if (!category || !challenges) return <CategoryChallengesLoading />;

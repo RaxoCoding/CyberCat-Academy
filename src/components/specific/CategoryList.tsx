@@ -17,9 +17,7 @@ export default function CategoryList({ categories }: CategoryListProps) {
           {categories.map((category) => (
             <CategoryCard 
               key={category.id} 
-              name={category.name} 
-              description={category.description} // Add a description field to your category table if needed
-              icon={category.icon || 'HelpCircle'}
+              category={category}
             />
           ))}
         </div>

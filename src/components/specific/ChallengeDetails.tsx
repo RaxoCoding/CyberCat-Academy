@@ -7,18 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Goal,
-  FileText,
   Trophy,
   Clock,
   Users,
   Download,
   User,
   ExternalLink,
+  CircleCheck,
 } from "lucide-react";
 import { ChallengeTag } from "@/components/common/ChallengeTag";
 import Link from "next/link";
 import { toast } from "sonner";
 import MarkdownRenderer from "../ui/markdown";
+import { useSolvedChallenges } from '@/hooks/useSolvedChallenges';
 
 type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
@@ -35,24 +36,29 @@ export default function ChallengeDetails({
   const [author, setAuthor] = useState<{ username: string } | null>(null);
   const { user: userAuth, supabase } = useSupabaseAuth();
   const [fileUrls, setFileUrls] = useState<Record<string, string>>({});
+  const [writeupUrl, setWriteupUrl] = useState<string | null>(null);
+  const { solvedChallenges, addSolvedChallenge } = useSolvedChallenges();
+  const isSolved = solvedChallenges.has(challenge.id);
 
-  const getFileUrl = useCallback(async (filePath: string) => {
-    const splitPath = filePath.split("/");
-    const fileName = splitPath.pop();
-    const challengeName = splitPath.pop();
-    const downloadName = challengeName + "-" + fileName;
+  const getFileUrl = useCallback(
+    async (bucket: string, filePath: string) => {
+      const splitPath = filePath.split("/");
+      const fileName = splitPath.pop();
+      const downloadName = challenge.name_id + "-" + fileName;
 
-    const { data, error } = await supabase.storage
-      .from("challenge_files")
-      .createSignedUrl(filePath, 3600, { download: downloadName }); // URL valid for 1 hour
+      const { data, error } = await supabase.storage
+        .from(bucket)
+        .createSignedUrl(filePath, 3600, { download: downloadName }); // URL valid for 1 hour
 
-    if (error) {
-      console.error("Error creating signed URL:", error);
-      return null;
-    }
+      if (error) {
+        console.error("Error creating signed URL:", error);
+        return null;
+      }
 
-    return data.signedUrl;
-  }, [supabase]);
+      return data.signedUrl;
+    },
+    [supabase]
+  );
 
   useEffect(() => {
     async function fetchSolveData() {
@@ -98,13 +104,28 @@ export default function ChallengeDetails({
   useEffect(() => {
     if (challenge.files) {
       challenge.files.forEach(async (file) => {
-        const url = await getFileUrl(file);
+        const url = await getFileUrl("challenge_files", file);
         if (url) {
           setFileUrls((prev) => ({ ...prev, [file]: url }));
         }
       });
     }
   }, [challenge.files, getFileUrl]);
+
+  useEffect(() => {
+    async function fetchWriteupUrl() {
+      console.log(challenge.writeup);
+      if (challenge.writeup && userAuth) {
+        const url = await getFileUrl("challenge_writeups", challenge.writeup);
+
+        if (url) {
+          setWriteupUrl(url);
+        }
+      }
+    }
+
+    fetchWriteupUrl();
+  }, [challenge.writeup, userAuth, supabase]);
 
   if (!userAuth) {
     return <div>For authenticated users only...</div>;
@@ -131,6 +152,7 @@ export default function ChallengeDetails({
         },
         ...solveHistory,
       ]);
+      addSolvedChallenge(challenge.id);
     } else {
       toast.error("Incorrect flag. Try again!");
     }
@@ -141,7 +163,12 @@ export default function ChallengeDetails({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>{challenge.name}</span>
+            <span className="flex items-center">
+              {isSolved && (
+                <CircleCheck className="mr-2 h-6 w-6 text-green-500" />
+              )}
+              {challenge.name}
+            </span>
             <span className="text-xl font-normal">{challenge.points} pts</span>
           </CardTitle>
           {author && (
@@ -151,19 +178,19 @@ export default function ChallengeDetails({
             </div>
           )}
         </CardHeader>
-        <CardContent>
-          <div className="text-lg mb-4">
+        <CardContent className="space-y-4">
+          <div className="text-lg">
             <MarkdownRenderer content={challenge.description} />
           </div>
           {challenge.tags && challenge.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2">
               {challenge.tags.map((tag) => (
                 <ChallengeTag key={tag} tag={tag} alwaysPrimary />
               ))}
             </div>
           )}
           {challenge.url && (
-            <div className="mb-4">
+            <div>
               <a
                 href={challenge.url}
                 target="_blank"
@@ -176,7 +203,7 @@ export default function ChallengeDetails({
             </div>
           )}
           {challenge.ressources && challenge.ressources.length > 0 && (
-            <div className="space-y-2 mb-4">
+            <div className="space-y-2">
               {challenge.ressources.map((resource) => (
                 <a
                   key={resource}
@@ -192,7 +219,7 @@ export default function ChallengeDetails({
             </div>
           )}
           {challenge.files && challenge.files.length > 0 && (
-            <div className="space-x-2 mb-4">
+            <div className="space-x-2">
               {challenge.files.map((file) => (
                 <Link
                   key={file}
@@ -226,14 +253,27 @@ export default function ChallengeDetails({
                   onChange={(e) => setFlag(e.target.value)}
                   className="flex-grow px-3 py-2 border rounded-md bg-secondary text-secondary-foreground"
                   required
+                  disabled={isSolved}
+                  placeholder={isSolved ? "Already Solved" : "FLAG{hello}"}
                 />
-                <Button type="submit" variant="default">
+                <Button type="submit" variant="default" disabled={isSolved}>
                   <Goal className="mr-2 h-4 w-4" />
-                  Submit
+                  {isSolved ? "Solved" : "Submit"}
                 </Button>
               </div>
             </div>
           </form>
+          {challenge.writeup && writeupUrl && (
+            <a
+              href={writeupUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center text-primary hover:underline"
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Download Writeup
+            </a>
+          )}
         </CardContent>
       </Card>
 
@@ -269,34 +309,6 @@ export default function ChallengeDetails({
           </ul>
         </CardContent>
       </Card>
-
-      {challenge.writeups && challenge.writeups.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="w-5 h-5 mr-2" />
-              Writeups
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {challenge.writeups.map((writeup) => (
-                <li key={writeup}>
-                  <a
-                    href={writeup}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-primary hover:underline"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    {writeup}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

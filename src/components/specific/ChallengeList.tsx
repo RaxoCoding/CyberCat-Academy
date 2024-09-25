@@ -130,7 +130,7 @@ export default function ChallengeList({
                 <TableRow
                   key={challenge.id}
                   className="cursor-pointer hover:bg-accent"
-                  onClick={() => router.push(`/challenge/${challenge.name}`)}
+                  onClick={() => router.push(`/challenge/${challenge.name_id}`)}
                 >
                   <TableCell>{challenge.name}</TableCell>
                   <TableCell>{challenge.description}</TableCell>
