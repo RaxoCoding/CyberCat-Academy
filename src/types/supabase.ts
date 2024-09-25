@@ -30,6 +30,7 @@ export interface Database {
                 Row: {
                     id: number
                     name: string
+                    name_id: string
                     created_at: string
                     icon: string
                     description: string
@@ -37,6 +38,7 @@ export interface Database {
                 Insert: {
                     id?: number
                     name: string
+                    name_id?: string
                     created_at?: string
                     icon?: string
                     description?: string
@@ -44,6 +46,7 @@ export interface Database {
                 Update: {
                     id?: number
                     name?: string
+                    name_id?: string
                     created_at?: string
                     icon?: string
                     description?: string
@@ -55,6 +58,7 @@ export interface Database {
                     created_at: string
                     description: string
                     name: string
+                    name_id: string
                     points: number
                     category_id: number
                     flag: string
@@ -70,6 +74,7 @@ export interface Database {
                     created_at?: string
                     description?: string
                     name: string
+                    name_id: string
                     points: number
                     category_id: number
                     flag?: string
@@ -85,6 +90,7 @@ export interface Database {
                     created_at?: string
                     description?: string
                     name?: string
+                    name_id?: string
                     points?: number
                     category_id?: number
                     flag?: string
@@ -119,6 +125,7 @@ export interface Database {
                 Row: {
                     id: number
                     name: string
+                    name_id: string
                     description: string
                     created_at: string
                     points: number
