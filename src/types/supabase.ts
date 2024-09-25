@@ -59,7 +59,7 @@ export interface Database {
                     category_id: number
                     flag: string
                     url: string | null
-                    writeups: string[] | null
+                    writeup: string | null
                     tags: string[] | null
                     ressources: string[] | null
                     author_id: string | null
@@ -74,7 +74,7 @@ export interface Database {
                     category_id: number
                     flag?: string
                     url?: string | null
-                    writeups?: string[] | null
+                    writeup?: string | null
                     tags?: string[] | null
                     ressources?: string[] | null
                     author_id?: string | null
@@ -89,7 +89,7 @@ export interface Database {
                     category_id?: number
                     flag?: string
                     url?: string | null
-                    writeups?: string[] | null
+                    writeup?: string | null
                     tags?: string[] | null
                     ressources?: string[] | null
                     author_id?: string | null
@@ -124,7 +124,7 @@ export interface Database {
                     points: number
                     category_id: number
                     url: string | null
-                    writeups: string[] | null
+                    writeup: string | null
                     ressources: string[] | null
                     files: string[] | null
                     tags: string[] | null
