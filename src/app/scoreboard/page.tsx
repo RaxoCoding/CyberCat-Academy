@@ -1,51 +1,38 @@
-"use client"
+import { createServerSupabaseClient } from "@/lib/supabase-server";
+import ClientScoreboardPage from "./ClientScoreboardPage";
 
-import { useEffect, useState } from 'react';
-import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
-import { Scoreboard } from "@/components/specific/Scoreboard";
-import ScoreboardPageLoading from './loading';
+const USERS_PER_PAGE = 100;
 
-interface ScoreboardData {
-  rank: number;
-  username: string;
-  score: number;
-}
+export default async function ScoreboardPage() {
+  const supabase = createServerSupabaseClient();
 
-export default function ScoreboardPage() {
-  const { supabase, loading } = useSupabaseAuth();
-  const [scoreboardData, setScoreboardData] = useState<ScoreboardData[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState<string>("");
+  const {
+    data: scoreboardData,
+    error,
+    count,
+  } = await supabase
+    .from("user_scores")
+    .select("username, total_score", { count: "exact" })
+    .order("total_score", { ascending: false })
+    .limit(100);
 
-  useEffect(() => {
-    async function fetchScoreboardData(search: string) {
-      if (!loading) {
-        const { data, error } = await supabase
-          .from("user_scores")
-          .select("username, total_score")
-          .ilike("username", "%" + search.toLowerCase() + "%")
-          .order("total_score", { ascending: false })
-          .limit(10);
+  if (error) {
+    console.error("Error fetching scoreboard data:", error);
+    return <div>Error loading scoreboard. Please try again later.</div>;
+  }
 
-        if (error) {
-          console.error('Error fetching scoreboard:', error);
-          setError('Error loading scoreboard. Please try again later.');
-        } else {
-          const formattedData = data.map((user, index) => ({
-            rank: index + 1,
-            username: user.username,
-            score: user.total_score,
-          }));
-          setScoreboardData(formattedData);
-        }
-      }
-    }
+  const formattedScoreboardData = scoreboardData.map((user, index) => ({
+    rank: index + 1,
+    username: user.username,
+    score: user.total_score,
+  }));
 
-    fetchScoreboardData(search);
-  }, [supabase, loading, search]);
+  const totalPages = Math.ceil((count || 0) / USERS_PER_PAGE);
 
-  if (error) return <div>{error}</div>;
-  if (!scoreboardData) return <ScoreboardPageLoading />;
-
-  return <Scoreboard scoreboardData={scoreboardData} setSearch={setSearch} />;
+  return (
+    <ClientScoreboardPage
+      initialScoreboardData={formattedScoreboardData}
+      initialTotalPages={totalPages}
+    />
+  );
 }
