@@ -15,6 +15,7 @@ export default function ScoreboardPage() {
   const { supabase, loading } = useSupabaseAuth();
   const [scoreboardData, setScoreboardData] = useState<ScoreboardData[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>("");
 
   useEffect(() => {
     async function fetchScoreboardData() {
@@ -45,5 +46,5 @@ export default function ScoreboardPage() {
   if (error) return <div>{error}</div>;
   if (!scoreboardData) return <ScoreboardPageLoading />;
 
-  return <Scoreboard scoreboardData={scoreboardData} />;
+  return <Scoreboard scoreboardData={scoreboardData} filter={filter} setFilter={setFilter} />;
 }

@@ -2,22 +2,26 @@ import React from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { SearchBar } from '../common/SearchBar';
 
 interface ScoreboardProps {
   scoreboardData: Array<{
     rank: number;
     username: string;
     score: number;
-  }>;
+  }>,
+  filter: string;
+  setFilter: (value: string) => void;
 }
 
-export function Scoreboard({ scoreboardData }: ScoreboardProps) {
+export function Scoreboard({ scoreboardData, filter, setFilter }: ScoreboardProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">CyberCat Academy Scoreboard</CardTitle>
       </CardHeader>
       <CardContent>
+        <SearchBar placeholder="Rechercher un utilisateur..." setSearch={setFilter} />
         <Table>
           <TableHeader>
             <TableRow>
@@ -27,7 +31,7 @@ export function Scoreboard({ scoreboardData }: ScoreboardProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {scoreboardData.map((user) => (
+            {scoreboardData.filter(user => user.username.toLowerCase().includes(filter.toLowerCase())).map((user) => (
               <TableRow key={user.rank}>
                 <TableCell className="font-medium">{user.rank}</TableCell>
                 <TableCell>
