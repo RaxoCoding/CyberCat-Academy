@@ -9,7 +9,11 @@ export function SearchBar({ placeholder, setSearch }: SearchBarProps) {
   const [searchValue, setSearchValue] = useState<string>("");
 
   useEffect(() => {
-    setSearch(searchValue);
+    const delayDebounceFn = setTimeout(() => {
+      setSearch(searchValue);
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [searchValue])
  
   return (
