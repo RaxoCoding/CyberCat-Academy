@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { SearchBar } from "@/components/common/SearchBar";
 
 interface ScoreboardData {
   rank: number;
@@ -23,21 +25,53 @@ interface ScoreboardData {
 
 interface ClientScoreboardPageProps {
   initialScoreboardData: ScoreboardData[];
-  currentPage: number;
-  totalPages: number;
+  initialTotalPages: number;
 }
 
-export default function ClientScoreboardPage({ 
-  initialScoreboardData, 
-  currentPage, 
-  totalPages 
-}: ClientScoreboardPageProps) {
-  const [scoreboardData] = useState<ScoreboardData[]>(initialScoreboardData);
-  const router = useRouter();
+const USERS_PER_PAGE = 100;
 
-  const goToPage = (page: number) => {
-    router.push(`/scoreboard?page=${page}`);
-  };
+export default function ClientScoreboardPage({
+  initialScoreboardData,
+  initialTotalPages,
+}: ClientScoreboardPageProps) {
+  const router = useRouter();
+  const [scoreboardData, setScoreboardData] = useState<ScoreboardData[]>(
+    initialScoreboardData
+  );
+  const { supabase, loading } = useSupabaseAuth();
+  const [search, setSearch] = useState<string>("");
+  const [totalPages, setTotalPages] = useState<number>(initialTotalPages);
+  const [page, setPage] = useState<number>(1);
+
+  useEffect(() => {
+    async function fetchScoreboardData(search: string, page: number) {
+      const from = (page - 1) * USERS_PER_PAGE;
+      const to = from + USERS_PER_PAGE - 1;
+
+      if (!loading) {
+        const { data, error, count } = await supabase
+          .from("user_scores")
+          .select("username, total_score")
+          .ilike("username", "%" + search.toLowerCase() + "%")
+          .order("total_score", { ascending: false })
+          .range(from, to);
+
+        if (error) {
+          console.error("Error fetching scoreboard:", error);
+        } else {
+          const formattedData = data.map((user, index) => ({
+            rank: from + index + 1,
+            username: user.username,
+            score: user.total_score,
+          }));
+          setScoreboardData(formattedData);
+          count && setTotalPages(Math.ceil((count || 0) / USERS_PER_PAGE));
+        }
+      }
+    }
+
+    fetchScoreboardData(search, page);
+  }, [supabase, loading, search, page]);
 
   return (
     <Card>
@@ -47,6 +81,13 @@ export default function ClientScoreboardPage({
         </CardTitle>
       </CardHeader>
       <CardContent>
+        <SearchBar
+          placeholder="Search for a user..."
+          setSearch={(value: string) => {
+            setPage(1);
+            setSearch(value);
+          }}
+        />
         <Table>
           <TableHeader>
             <TableRow>
@@ -74,19 +115,19 @@ export default function ClientScoreboardPage({
         </Table>
         <div className="flex justify-between items-center mt-4">
           <Button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
+            onClick={() => setPage(page - 1)}
+            disabled={page === 1}
             variant="outline"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Previous
           </Button>
           <span>
-            Page {currentPage} of {totalPages}
+            Page {page} of {totalPages}
           </span>
           <Button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            onClick={() => setPage(page + 1)}
+            disabled={page === totalPages}
             variant="outline"
           >
             Next

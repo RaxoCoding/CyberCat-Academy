@@ -20,6 +20,7 @@ export default function ScoreboardPageLoading() {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        <Skeleton className="h-8 w-full" />
         <Table>
           <TableHeader>
             <TableRow>
