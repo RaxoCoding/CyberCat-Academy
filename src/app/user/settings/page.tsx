@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { useAuthedUser } from "@/hooks/useAuthedUser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +27,7 @@ import { handleError } from "@/utils/errorHandler";
 
 export default function UserSettings() {
   const router = useRouter();
-  const { supabase, user, loading } = useSupabaseAuth();
+  const { user, isLoading, updateUser, deleteUser, logout } = useAuthedUser();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -41,8 +41,8 @@ export default function UserSettings() {
 
   useEffect(() => {
     if (user) {
-      setEmail(user.email!);
-      setUsername(user.user_metadata.username);
+      setEmail(user.email);
+      setUsername(user.username);
     }
   }, [user]);
 
@@ -50,89 +50,72 @@ export default function UserSettings() {
     e.preventDefault();
     setLoadingState((prev) => ({ ...prev, updateUsername: true }));
 
-    try {
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: { username },
-      });
-
-      if (updateError) {
-        throw updateError;
-      }
-
-      toast.success("Username updated successfully.");
-    } catch (error: unknown) {
-      toast.error(handleError(error));
-    } finally {
-      setLoadingState((prev) => ({ ...prev, updateUsername: false }));
-    }
+    updateUser({
+      updates: { data: { username } },
+      onSuccess: () => toast.success("Username updated successfully."),
+      onError: (error: unknown) => toast.error(handleError(error)),
+      onSettled: () => {
+        setLoadingState((prev) => ({ ...prev, updateUsername: false }));
+      },
+    });
   };
 
   const handleUpdateEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoadingState((prev) => ({ ...prev, updateEmail: true }));
 
-    try {
-      const { error: updateError } = await supabase.auth.updateUser(
-        {
-          email,
-        },
-        {
-          emailRedirectTo: `${window.location.origin}/auth/email-verified`,
-        }
-      );
-
-      if (updateError) {
-        throw updateError;
-      }
-
-      toast.success("Email update request sent. Please check your inbox to confirm the change.");
-    } catch (error: unknown) {
-      toast.error(handleError(error));
-    } finally {
-      setLoadingState((prev) => ({ ...prev, updateEmail: false }));
-    }
+    updateUser({
+      updates: { email },
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/email-verified`,
+      },
+      onSuccess: () =>
+        toast.success(
+          "Email update request sent. Please check your inbox to confirm the change."
+        ),
+      onError: (error: unknown) => toast.error(handleError(error)),
+      onSettled: () => {
+        setLoadingState((prev) => ({ ...prev, updateEmail: false }));
+      },
+    });
   };
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoadingState((prev) => ({ ...prev, updatePassword: true }));
 
-    try {
-      const { error: updateError } = await supabase.auth.updateUser({
-        password,
-      });
-
-      if (updateError) {
-        throw updateError;
-      }
-
-			toast.success("Password updated successfully.");
-    } catch (error: unknown) {
-      toast.error(handleError(error));
-    } finally {
-      setLoadingState((prev) => ({ ...prev, updatePassword: false }));
-    }
+    updateUser({
+      updates: { password },
+      onSuccess: () => toast.success("Password updated successfully."),
+      onError: (error: unknown) => toast.error(handleError(error)),
+      onSettled: () => {
+        setLoadingState((prev) => ({ ...prev, updatePassword: false }));
+      },
+    });
   };
 
   const handleDelete = async () => {
     setLoadingState((prev) => ({ ...prev, delete: true }));
 
-    try {
-      const { error: deleteError } = await supabase.rpc("delete_user");
-
-      if (deleteError) {
-        throw deleteError;
-      }
-
-			toast.success("Account deleted successfully.");
-      await supabase.auth.signOut();
-      router.push("/");
-    } catch (error: unknown) {
-      toast.error(handleError(error));
-    } finally {
-      setLoadingState((prev) => ({ ...prev, delete: false }));
-    }
+    deleteUser({
+      onSuccess: () => {
+        toast.success("Account deleted successfully.");
+        logout({
+          onSettled: () => router.push("/")
+        });
+      },
+      onError: (error) => toast.error(handleError(error)),
+      onSettled: () => setLoadingState((prev) => ({ ...prev, delete: false })),
+    });
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <div>Please sign in to access user settings.</div>;
+  }
 
   return (
     <div className="container mx-auto p-8">
@@ -158,7 +141,7 @@ export default function UserSettings() {
               <Button
                 type="submit"
                 className="max-w-md"
-                disabled={loading || loadingState.updateUsername}
+                disabled={isLoading || loadingState.updateUsername}
               >
                 {loadingState.updateUsername && (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -190,7 +173,7 @@ export default function UserSettings() {
               <Button
                 type="submit"
                 className="max-w-md"
-                disabled={loading || loadingState.updateEmail}
+                disabled={isLoading || loadingState.updateEmail}
               >
                 {loadingState.updateEmail && (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -222,7 +205,7 @@ export default function UserSettings() {
               <Button
                 type="submit"
                 className="max-w-md"
-                disabled={loading || loadingState.updatePassword}
+                disabled={isLoading || loadingState.updatePassword}
               >
                 {loadingState.updatePassword && (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -243,7 +226,7 @@ export default function UserSettings() {
               variant="destructive"
               className="max-w-md"
               onClick={() => setIsDeleteModalOpen(true)}
-              disabled={loading || loadingState.delete}
+              disabled={isLoading || loadingState.delete}
             >
               {loadingState.delete && (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
