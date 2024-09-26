@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
@@ -19,10 +19,11 @@ import { ChallengeTag } from "@/components/common/ChallengeTag";
 import Link from "next/link";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/ui/markdown";
-import { useSolvedChallenges } from '@/hooks/useSolvedChallenges';
+import { useSolvedChallenges } from "@/hooks/useSolvedChallenges";
 import ChallengeLoading from "./loading";
 
 type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
+  id: number,
   author: { username: string } | null;
 };
 
@@ -70,7 +71,13 @@ export default function ClientChallengePage({
     }
 
     generateUrls();
-  }, [challenge.files, challenge.writeup, userAuth, supabase, challenge.name_id]);
+  }, [
+    challenge.files,
+    challenge.writeup,
+    userAuth,
+    supabase,
+    challenge.name_id,
+  ]);
 
   if (authLoading) return <ChallengeLoading />;
   if (!userAuth) return <div>For authenticated users only...</div>;
@@ -129,9 +136,11 @@ export default function ClientChallengePage({
           )}
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="text-lg">
-            <MarkdownRenderer content={challenge.description} />
-          </div>
+          {challenge.description && (
+            <div className="text-lg">
+              <MarkdownRenderer content={challenge.description} />
+            </div>
+          )}
           {challenge.tags && challenge.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {challenge.tags.map((tag) => (

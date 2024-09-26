@@ -14,7 +14,9 @@ import type { Database } from "@/types/supabase";
 import { useRouter } from "next/navigation";
 import { ChallengeTag } from "@/components/common/ChallengeTag";
 
-type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
+  id: string;
+};
 
 interface ChallengeListProps {
   challenges: Challenge[];

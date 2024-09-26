@@ -8,9 +8,13 @@ import ChallengeList from "@/components/common/ChallengeList";
 import { Database } from "@/types/supabase";
 import UserProfileLoading from "./loading";
 
-type UserProfile = Database["public"]["Views"]["user_scores"]["Row"];
+type UserProfile = Database["public"]["Views"]["user_scores"]["Row"] & {
+  created_at: string
+};
 
-type SolvedChallenge = Database["public"]["Views"]["public_challenges"]["Row"];
+type SolvedChallenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
+  id: string;
+};
 
 export default function UserProfilePage() {
   const { supabase } = useSupabaseAuth();
@@ -39,7 +43,7 @@ export default function UserProfilePage() {
         const { data: userData, error: userError } = await supabase
           .from("users")
           .select("created_at")
-          .eq("id", profileData.user_id)
+          .eq("id", profileData.user_id!)
           .single();
 
         if (userError) {
@@ -66,7 +70,7 @@ export default function UserProfilePage() {
             )
           `
           )
-          .eq("user_id", profileData.user_id)
+          .eq("user_id", profileData.user_id!)
           .order("created_at", { ascending: false });
 
         if (challengesError) {
