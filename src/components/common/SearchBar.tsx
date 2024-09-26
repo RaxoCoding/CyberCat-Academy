@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Search } from 'lucide-react'
-import { Input } from '../ui/input';
 
 interface SearchBarProps {
   placeholder: string;
