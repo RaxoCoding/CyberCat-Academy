@@ -1,5 +1,10 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import ClientCategoryPage from "./ClientCategoryPage";
+import { Database } from "@/types/supabase";
+
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
+  id: string;
+};
 
 export default async function CategoryPage({ params }: { params: { category_name_id: string } }) {
   const supabase = createServerSupabaseClient();
@@ -26,5 +31,5 @@ export default async function CategoryPage({ params }: { params: { category_name
     return <div>Error loading challenges</div>;
   }
 
-  return <ClientCategoryPage category={category} initialChallenges={challenges} />;
+  return <ClientCategoryPage category={category} initialChallenges={challenges as Challenge[]} />;
 }

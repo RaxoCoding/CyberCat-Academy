@@ -1,7 +1,13 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import ClientScoreboardPage from "./ClientScoreboardPage";
+import { Database } from "@/types/supabase";
 
 const USERS_PER_PAGE = 100;
+
+type UserScore = Database["public"]["Views"]["user_scores"]["Row"] & {
+  username: string,
+  total_score: number;
+}
 
 export default async function ScoreboardPage({
   searchParams,
@@ -24,7 +30,7 @@ export default async function ScoreboardPage({
     return <div>Error loading scoreboard. Please try again later.</div>;
   }
 
-  const formattedScoreboardData = scoreboardData.map((user, index) => ({
+  const formattedScoreboardData = (scoreboardData as UserScore[]).map((user, index) => ({
     rank: from + index + 1,
     username: user.username,
     score: user.total_score,

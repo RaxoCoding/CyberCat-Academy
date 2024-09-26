@@ -1,5 +1,11 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import ClientChallengePage from "./ClientChallengePage";
+import { Database } from "@/types/supabase";
+
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
+  id: number,
+  author: { username: string } | null;
+};
 
 export default async function ChallengePage({ params }: { params: { name_id: string } }) {
   const supabase = createServerSupabaseClient();
@@ -18,7 +24,7 @@ export default async function ChallengePage({ params }: { params: { name_id: str
   const challenge = {
     ...challengeData,
     author: challengeData.author as unknown as { username: string } | null
-  }
+  } as Challenge
 
   // Fetch solve count and history
   const { count } = await supabase
