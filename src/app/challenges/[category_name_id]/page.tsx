@@ -2,9 +2,7 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import ClientCategoryPage from "./ClientCategoryPage";
 import { Database } from "@/types/supabase";
 
-type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
-  id: string;
-};
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
 export default async function CategoryPage({ params }: { params: { category_name_id: string } }) {
   const supabase = createServerSupabaseClient();

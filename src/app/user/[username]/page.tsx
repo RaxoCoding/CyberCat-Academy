@@ -9,20 +9,18 @@ import { Database } from "@/types/supabase";
 import UserProfileLoading from "./loading";
 
 type UserProfile = Database["public"]["Views"]["user_scores"]["Row"] & {
-  created_at: string
+  created_at: string;
 };
 
-type SolvedChallenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
-  id: string;
-};
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
 export default function UserProfilePage() {
   const { supabase } = useSupabaseAuth();
   const params = useParams();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [solvedChallenges, setSolvedChallenges] = useState<
-    SolvedChallenge[] | null
-  >(null);
+  const [solvedChallenges, setSolvedChallenges] = useState<Challenge[] | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -79,9 +77,9 @@ export default function UserProfilePage() {
           return;
         }
 
-				const solvedChallenges = challengesData.map((item) => ({
-					...(item.public_challenges as unknown as SolvedChallenge),
-				}));
+        const solvedChallenges = challengesData.map((item) => ({
+          ...(item.public_challenges as unknown as Challenge),
+        }));
 
         setSolvedChallenges(solvedChallenges);
       }
@@ -113,7 +111,10 @@ export default function UserProfilePage() {
           <CardTitle>Solved Challenges</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChallengeList defaultViewMode="table" challenges={solvedChallenges} />
+          <ChallengeList
+            defaultViewMode="table"
+            challenges={solvedChallenges}
+          />
         </CardContent>
       </Card>
     </div>

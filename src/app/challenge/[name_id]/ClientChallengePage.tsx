@@ -22,13 +22,12 @@ import MarkdownRenderer from "@/components/ui/markdown";
 import { useSolvedChallenges } from "@/hooks/useSolvedChallenges";
 import ChallengeLoading from "./loading";
 
-type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
-  id: number,
+type ChallengeWithAuthor = Database["public"]["Views"]["public_challenges"]["Row"] & {
   author: { username: string } | null;
 };
 
 interface ClientChallengePageProps {
-  challenge: Challenge;
+  challenge: ChallengeWithAuthor;
   initialSolves: number;
   initialSolveHistory: { username: string; solved_at: string }[];
 }
