@@ -1,4 +1,4 @@
-name: CI
+name: Autogenerate Supabase Types
 
 on:
   pull_request:
