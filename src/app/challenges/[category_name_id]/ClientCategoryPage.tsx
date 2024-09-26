@@ -7,9 +7,7 @@ import CategoryChallengesLoading from './loading';
 import ChallengeList from "@/components/common/ChallengeList";
 import { useSolvedChallenges } from '@/hooks/useSolvedChallenges';
 
-type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
-  id: string;
-};
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 type Category = Database["public"]["Tables"]["categories"]["Row"];
 
 interface ClientCategoryPageProps {
