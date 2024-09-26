@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -34,7 +33,6 @@ export default function ClientScoreboardPage({
   initialScoreboardData,
   initialTotalPages,
 }: ClientScoreboardPageProps) {
-  const router = useRouter();
   const [scoreboardData, setScoreboardData] = useState<ScoreboardData[]>(
     initialScoreboardData
   );
@@ -71,7 +69,7 @@ export default function ClientScoreboardPage({
     }
 
     fetchScoreboardData(search, page);
-  }, [supabase, loading, search, page]);
+  }, [supabase, loading, setSearch, setPage, search, page]);
 
   return (
     <Card>
