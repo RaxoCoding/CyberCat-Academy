@@ -1,6 +1,6 @@
-"use client";
+ "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import type { Database } from "@/types/supabase";
 import { Button } from "@/components/ui/button";
@@ -18,118 +18,62 @@ import {
 import { ChallengeTag } from "@/components/common/ChallengeTag";
 import Link from "next/link";
 import { toast } from "sonner";
-import MarkdownRenderer from "../ui/markdown";
+import MarkdownRenderer from "@/components/ui/markdown";
 import { useSolvedChallenges } from '@/hooks/useSolvedChallenges';
+import ChallengeLoading from "./loading";
 
-type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
+  author: { username: string } | null;
+};
 
-export default function ChallengeDetails({
-  challenge,
-}: {
+interface ClientChallengePageProps {
   challenge: Challenge;
-}) {
-  const [flag, setFlag] = useState("");
-  const [solves, setSolves] = useState(0);
-  const [solveHistory, setSolveHistory] = useState<
-    { username: string; solved_at: string }[]
-  >([]);
-  const [author, setAuthor] = useState<{ username: string } | null>(null);
-  const { user: userAuth, supabase } = useSupabaseAuth();
+  initialSolves: number;
+  initialSolveHistory: { username: string; solved_at: string }[];
+}
+
+export default function ClientChallengePage({
+  challenge,
+  initialSolves,
+  initialSolveHistory,
+}: ClientChallengePageProps) {
+  const { supabase, loading: authLoading, user: userAuth } = useSupabaseAuth();
+  const [solves, setSolves] = useState(initialSolves);
+  const [solveHistory, setSolveHistory] = useState(initialSolveHistory);
   const [fileUrls, setFileUrls] = useState<Record<string, string>>({});
   const [writeupUrl, setWriteupUrl] = useState<string | null>(null);
+  const [flag, setFlag] = useState("");
   const { solvedChallenges, addSolvedChallenge } = useSolvedChallenges();
   const isSolved = solvedChallenges.has(challenge.id);
 
-  const getFileUrl = useCallback(
-    async (bucket: string, filePath: string) => {
-      const splitPath = filePath.split("/");
-      const fileName = splitPath.pop();
-      const downloadName = challenge.name_id + "-" + fileName;
-
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .createSignedUrl(filePath, 3600, { download: downloadName }); // URL valid for 1 hour
-
-      if (error) {
-        console.error("Error creating signed URL:", error);
-        return null;
+  useEffect(() => {
+    async function generateUrls() {
+      if (challenge.files) {
+        const urls: Record<string, string> = {};
+        for (const file of challenge.files) {
+          const { data } = await supabase.storage
+            .from("challenge_files")
+            .createSignedUrl(file, 3600, {
+              download: `${challenge.name_id}-${file.split("/").pop()}`,
+            });
+          if (data) urls[file] = data.signedUrl;
+        }
+        setFileUrls(urls);
       }
 
-      return data.signedUrl;
-    },
-    [supabase]
-  );
-
-  useEffect(() => {
-    async function fetchSolveData() {
-      const { count } = await supabase
-        .from("users_link_challenges")
-        .select("*", { count: "exact" })
-        .eq("challenge_id", challenge.id);
-
-      setSolves(count || 0);
-
-      const { data: history } = await supabase
-        .from("users_link_challenges")
-        .select("users(username), created_at")
-        .eq("challenge_id", challenge.id)
-        .order("created_at", { ascending: false })
-        .limit(5);
-
-      setSolveHistory(
-        history?.map((item) => ({
-          username:
-            (item.users as unknown as { username: string })?.username ||
-            "Unknown",
-          solved_at: new Date(item.created_at).toLocaleString(),
-        })) || []
-      );
-
-      if (challenge.author_id) {
-        const { data: authorData } = await supabase
-          .from("users")
-          .select("username")
-          .eq("id", challenge.author_id)
-          .single();
-
-        if (authorData) {
-          setAuthor(authorData);
-        }
-      }
-    }
-
-    fetchSolveData();
-  }, [supabase, challenge.id, challenge.author_id]);
-
-  useEffect(() => {
-    if (challenge.files) {
-      challenge.files.forEach(async (file) => {
-        const url = await getFileUrl("challenge_files", file);
-        if (url) {
-          setFileUrls((prev) => ({ ...prev, [file]: url }));
-        }
-      });
-    }
-  }, [challenge.files, getFileUrl]);
-
-  useEffect(() => {
-    async function fetchWriteupUrl() {
-      console.log(challenge.writeup);
       if (challenge.writeup && userAuth) {
-        const url = await getFileUrl("challenge_writeups", challenge.writeup);
-
-        if (url) {
-          setWriteupUrl(url);
-        }
+        const { data } = await supabase.storage
+          .from("challenge_writeups")
+          .createSignedUrl(challenge.writeup, 3600);
+        if (data) setWriteupUrl(data.signedUrl);
       }
     }
 
-    fetchWriteupUrl();
-  }, [challenge.writeup, userAuth, supabase]);
+    generateUrls();
+  }, [challenge.files, challenge.writeup, userAuth, supabase, challenge.name_id]);
 
-  if (!userAuth) {
-    return <div>For authenticated users only...</div>;
-  }
+  if (authLoading) return <ChallengeLoading />;
+  if (!userAuth) return <div>For authenticated users only...</div>;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -159,7 +103,7 @@ export default function ChallengeDetails({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="bg-background text-white space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
@@ -171,10 +115,16 @@ export default function ChallengeDetails({
             </span>
             <span className="text-xl font-normal">{challenge.points} pts</span>
           </CardTitle>
-          {author && (
+          {challenge.author && (
             <div className="flex items-center text-sm text-muted-foreground">
               <User className="w-4 h-4 mr-2" />
-              <span>Author: {author.username}</span>
+              <span>Author: </span>
+              <Link
+                href={`/user/${encodeURIComponent(challenge.author.username)}`}
+                className="ml-1 text-primary hover:underline"
+              >
+                {challenge.author.username}
+              </Link>
             </div>
           )}
         </CardHeader>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ChallengeList from "@/components/specific/ChallengeList";
+import ChallengeList from "@/components/common/ChallengeList";
 import { Database } from "@/types/supabase";
 import UserProfileLoading from "./loading";
 
@@ -77,7 +77,6 @@ export default function UserProfilePage() {
 
 				const solvedChallenges = challengesData.map((item) => ({
 					...(item.public_challenges as unknown as SolvedChallenge),
-					created_at: item.created_at,
 				}));
 
         setSolvedChallenges(solvedChallenges);
@@ -110,7 +109,7 @@ export default function UserProfilePage() {
           <CardTitle>Solved Challenges</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChallengeList defaultViewMode="table" challenges={solvedChallenges} showSolvedDate />
+          <ChallengeList defaultViewMode="table" challenges={solvedChallenges} />
         </CardContent>
       </Card>
     </div>

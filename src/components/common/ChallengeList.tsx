@@ -14,20 +14,18 @@ import type { Database } from "@/types/supabase";
 import { useRouter } from "next/navigation";
 import { ChallengeTag } from "@/components/common/ChallengeTag";
 
-type Challenge = Database["public"]["Views"]["public_challenges"]["Row"] & {
-  created_at?: string;
-};
+type Challenge = Database["public"]["Views"]["public_challenges"]["Row"];
 
 interface ChallengeListProps {
   challenges: Challenge[];
-  showSolvedDate?: boolean;
+  solvedChallenges?: Set<number>;
   defaultViewMode?: "card" | "table";
 }
 
 export default function ChallengeList({
   challenges,
-  showSolvedDate = false,
   defaultViewMode = "card",
+  solvedChallenges = new Set(),
 }: ChallengeListProps) {
   const [viewMode, setViewMode] = useState<"card" | "table">(defaultViewMode);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -109,7 +107,7 @@ export default function ChallengeList({
             <ChallengeCard
               key={challenge.id}
               challenge={challenge}
-              solvedDate={showSolvedDate ? challenge.created_at : undefined}
+              isSolved={solvedChallenges.has(challenge.id)}
             />
           ))}
         </div>
@@ -122,7 +120,6 @@ export default function ChallengeList({
                 <TableHead>Description</TableHead>
                 <TableHead>Points</TableHead>
                 <TableHead>Tags</TableHead>
-                {showSolvedDate && <TableHead>Solved Date</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -138,11 +135,6 @@ export default function ChallengeList({
                   <TableCell>
                     {challenge.tags ? challenge.tags.join(", ") : ""}
                   </TableCell>
-                  {showSolvedDate && challenge.created_at && (
-                    <TableCell>
-                      {new Date(challenge.created_at).toLocaleDateString()}
-                    </TableCell>
-                  )}
                 </TableRow>
               ))}
             </TableBody>

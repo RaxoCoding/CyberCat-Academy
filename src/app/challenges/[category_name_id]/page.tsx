@@ -1,65 +1,30 @@
-"use client";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
+import ClientCategoryPage from "./ClientCategoryPage";
 
-import { useEffect, useState } from "react";
-import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
-import { useParams } from "next/navigation";
-import ChallengeList from "@/components/specific/ChallengeList";
-import { Database } from "@/types/supabase";
-import CategoryChallengesLoading from "./loading";
+export default async function CategoryPage({ params }: { params: { category_name_id: string } }) {
+  const supabase = createServerSupabaseClient();
 
-export default function CategoryPage() {
-  const { supabase, loading } = useSupabaseAuth();
-  const params = useParams();
-  const [category, setCategory] = useState<
-    Database["public"]["Tables"]["categories"]["Row"] | null
-  >(null);
-  const [challenges, setChallenges] = useState<
-    Database["public"]["Views"]["public_challenges"]["Row"][] | null
-  >(null);
-  const [error, setError] = useState<string | null>(null);
+  // Fetch category data
+  const { data: category, error: categoryError } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("name_id", decodeURIComponent(params.category_name_id))
+    .single();
 
-  useEffect(() => {
-    async function fetchCategoryAndChallenges() {
-      if (!loading && params.category_name_id) {
-        const { data: categoryData, error: categoryError } = await supabase
-          .from("categories")
-          .select("*")
-          .eq("name_id", decodeURIComponent(params.category_name_id as string))
-          .single();
+  if (categoryError) {
+    return <div>Category not found</div>;
+  }
 
-        if (categoryError) {
-          console.error("Error fetching category:", categoryError);
-          setError("Category not found");
-          return;
-        }
+  // Fetch challenges for the category
+  const { data: challenges, error: challengesError } = await supabase
+    .from("public_challenges")
+    .select("*")
+    .eq("category_id", category.id)
+    .order("points", { ascending: true });
 
-        setCategory(categoryData);
+  if (challengesError) {
+    return <div>Error loading challenges</div>;
+  }
 
-        const { data: challengesData, error: challengesError } = await supabase
-          .from("public_challenges")
-          .select("*")
-          .eq("category_id", categoryData.id)
-          .order("points");
-
-        if (challengesError) {
-          console.error("Error fetching challenges:", challengesError);
-          setError("Error loading challenges. Please try again later.");
-        } else {
-          setChallenges(challengesData);
-        }
-      }
-    }
-
-    fetchCategoryAndChallenges();
-  }, [supabase, loading, params.category_name_id]);
-
-  if (error) return <div>{error}</div>;
-  if (!category || !challenges) return <CategoryChallengesLoading />;
-
-  return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">{category.name} Challenges</h1>
-      <ChallengeList challenges={challenges} />
-    </div>
-  );
+  return <ClientCategoryPage category={category} initialChallenges={challenges} />;
 }
