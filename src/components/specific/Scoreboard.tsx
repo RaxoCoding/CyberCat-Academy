@@ -10,18 +10,17 @@ interface ScoreboardProps {
     username: string;
     score: number;
   }>,
-  filter: string;
-  setFilter: (value: string) => void;
+  setSearch: (value: string) => void;
 }
 
-export function Scoreboard({ scoreboardData, filter, setFilter }: ScoreboardProps) {
+export function Scoreboard({ scoreboardData, setSearch }: ScoreboardProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">CyberCat Academy Scoreboard</CardTitle>
       </CardHeader>
       <CardContent>
-        <SearchBar placeholder="Rechercher un utilisateur..." setSearch={setFilter} />
+        <SearchBar placeholder="Rechercher un utilisateur..." setSearch={setSearch} />
         <Table>
           <TableHeader>
             <TableRow>
@@ -31,7 +30,7 @@ export function Scoreboard({ scoreboardData, filter, setFilter }: ScoreboardProp
             </TableRow>
           </TableHeader>
           <TableBody>
-            {scoreboardData.filter(user => user.username.toLowerCase().includes(filter.toLowerCase())).map((user) => (
+            {scoreboardData.map((user) => (
               <TableRow key={user.rank}>
                 <TableCell className="font-medium">{user.rank}</TableCell>
                 <TableCell>

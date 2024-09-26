@@ -15,14 +15,15 @@ export default function ScoreboardPage() {
   const { supabase, loading } = useSupabaseAuth();
   const [scoreboardData, setScoreboardData] = useState<ScoreboardData[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
 
   useEffect(() => {
-    async function fetchScoreboardData() {
+    async function fetchScoreboardData(search: string) {
       if (!loading) {
         const { data, error } = await supabase
           .from("user_scores")
           .select("username, total_score")
+          .ilike("username", "%" + search.toLowerCase() + "%")
           .order("total_score", { ascending: false })
           .limit(10);
 
@@ -40,11 +41,11 @@ export default function ScoreboardPage() {
       }
     }
 
-    fetchScoreboardData();
-  }, [supabase, loading]);
+    fetchScoreboardData(search);
+  }, [supabase, loading, search]);
 
   if (error) return <div>{error}</div>;
   if (!scoreboardData) return <ScoreboardPageLoading />;
 
-  return <Scoreboard scoreboardData={scoreboardData} filter={filter} setFilter={setFilter} />;
+  return <Scoreboard scoreboardData={scoreboardData} setSearch={setSearch} />;
 }
