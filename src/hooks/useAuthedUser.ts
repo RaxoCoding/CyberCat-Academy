@@ -93,6 +93,7 @@ export function useAuthedUser() {
       if (error) throw error;
     },
     onSuccess: (data, { onSuccess }: baseSideEffects) => {
+      queryClient.setQueryData(["user", userAuth?.id], null);
       onSuccess && onSuccess(data);
     },
     onError: (error, { onError }: baseSideEffects) => {
