@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Card,
@@ -18,33 +18,39 @@ import { Loader2 } from "lucide-react";
 import { handleError } from "@/utils/errorHandler";
 import { toast } from "sonner";
 
-export default function SignIn() {
+export default function SignUp() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [signInLoading, setSignInLoading] = useState(false);
+  const [username, setUsername] = useState("");
+	const [signUpLoading, setSignUpLoading] = useState(false);
   const { supabase, loading } = useSupabaseAuth();
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
+		setSignUpLoading(true);
     e.preventDefault();
-    setSignInLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            username,
+          },
+					emailRedirectTo: `${window.location.origin}/auth/email-verified`
+        },
       });
 
       if (error) {
         throw error;
       }
 
-      toast.success("Signed in successfully.");
-      router.push("/");
+      router.push('/auth/verify-email');
     } catch (error: unknown) {
       toast.error(handleError(error));
     } finally {
-      setSignInLoading(false);
+      setSignUpLoading(false);
     }
   };
 
@@ -53,14 +59,23 @@ export default function SignIn() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Sign In
+            Sign Up
           </CardTitle>
           <CardDescription className="text-center">
-            Choose your preferred sign in method
+            Create an account to get started
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignIn} className="space-y-4">
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -81,30 +96,15 @@ export default function SignIn() {
                 required
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading || signInLoading}
-            >
-              {signInLoading && (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              )}
-              Sign In
+            <Button type="submit" className="w-full" disabled={loading || signUpLoading}>
+							{signUpLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin"/>}
+              Sign Up
             </Button>
           </form>
 
-          <div className="mt-4 text-center flex flex-col">
-            <Link
-              href="/auth/forgot-password"
-              className="text-sm text-primary hover:underline"
-            >
-              Forgot password?
-            </Link>
-            <Link
-              href="/auth/sign-up"
-              className="text-sm text-primary hover:underline"
-            >
-              Don&apos;t have an account? Sign Up
+          <div className="mt-4 text-center">
+            <Link href="/auth/sign-in" className="text-sm text-primary hover:underline">
+              Already have an account? Sign In
             </Link>
           </div>
         </CardContent>
