@@ -100,9 +100,7 @@ export default function UserSettings() {
     deleteUser({
       onSuccess: () => {
         toast.success("Account deleted successfully.");
-        logout({
-          onSettled: () => router.push("/")
-        });
+        router.push("/");
       },
       onError: (error) => toast.error(handleError(error)),
       onSettled: () => setLoadingState((prev) => ({ ...prev, delete: false })),
