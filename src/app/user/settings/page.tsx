@@ -27,7 +27,7 @@ import { handleError } from "@/utils/errorHandler";
 
 export default function UserSettings() {
   const router = useRouter();
-  const { user, isLoading, updateUser, deleteUser, logout } = useAuthedUser();
+  const { user, isLoading, updateUser, deleteUser } = useAuthedUser();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

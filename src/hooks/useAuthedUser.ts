@@ -25,7 +25,7 @@ export function useAuthedUser() {
       .eq("id", userAuth.id)
       .single();
 
-    if (error) throw new Error("An unknown error occurred.");
+    if (error) throw error;
     return { ...data, email: userAuth.email! };
   };
 

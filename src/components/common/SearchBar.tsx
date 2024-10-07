@@ -14,7 +14,7 @@ export function SearchBar({ placeholder, setSearch }: SearchBarProps) {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchValue])
+  }, [searchValue, setSearch])
  
   return (
     <input
