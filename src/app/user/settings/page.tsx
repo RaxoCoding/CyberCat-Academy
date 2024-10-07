@@ -102,7 +102,7 @@ export default function UserSettings() {
         toast.success("Account deleted successfully.");
         router.push("/");
       },
-      onError: (error) => toast.error(handleError(error)),
+      onError: (error: unknown) => toast.error(handleError(error)),
       onSettled: () => setLoadingState((prev) => ({ ...prev, delete: false })),
     });
   };
