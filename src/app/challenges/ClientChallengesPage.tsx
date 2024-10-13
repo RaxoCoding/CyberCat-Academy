@@ -1,25 +1,47 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
-import { Database } from '@/types/supabase';
-import ChallengesLoading from './loading';
+import { Database } from "@/types/supabase";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { icons } from 'lucide-react';
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { icons } from "lucide-react";
 
-type Category = Database['public']['Tables']['categories']['Row'];
+type Category = Database["public"]["Tables"]["categories"]["Row"];
 
 interface ClientChallengesPageProps {
   initialCategories: Category[];
 }
 
-export default function ClientChallengesPage({ initialCategories }: ClientChallengesPageProps) {
-  const { loading } = useSupabaseAuth();
-  const [categories] = useState<Category[]>(initialCategories);
+export default function ClientChallengesPage({
+  initialCategories,
+}: ClientChallengesPageProps) {
+  const { supabase } = useSupabaseAuth();
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
 
-  if (loading) return <ChallengesLoading />;
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const { data, error } = await supabase
+          .from("categories")
+          .select("*")
+          .order("name");
+
+        if (error) throw error;
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    fetchCategories();
+  }, [supabase]);
 
   return (
     <div>
